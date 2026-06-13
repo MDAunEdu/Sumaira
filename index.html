@@ -1,577 +1,1283 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PixelNest — Premium Camera Gear</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font-sans); }
-  .pn-root { background: var(--color-background-tertiary); min-height: 100vh; padding: 0; }
+  :root {
+    --ink: #0d0d0d;
+    --ink2: #3a3a3a;
+    --ink3: #767676;
+    --paper: #ffffff;
+    --surface: #f5f4f1;
+    --surface2: #eeece8;
+    --accent: #5345b8;
+    --accent2: #3c34a0;
+    --accent-light: #eeedfe;
+    --coral: #d85a30;
+    --teal: #0f6e56;
+    --gold: #ba7517;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.06);
+    --r: 10px;
+    --r2: 16px;
+    --shadow: 0 2px 24px rgba(0,0,0,0.07);
+    --shadow2: 0 8px 48px rgba(0,0,0,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; overflow-x: hidden; }
+  img { display: block; max-width: 100%; }
+  button, input, select { font-family: inherit; }
+  a { color: inherit; text-decoration: none; }
 
-  /* NAV */
-  .pn-nav { background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; position: sticky; top: 0; z-index: 100; }
-  .pn-logo { font-size: 17px; font-weight: 500; color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; }
-  .pn-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: #534AB7; }
-  .pn-nav-links { display: flex; gap: 6px; }
-  .pn-nav-link { font-size: 13px; color: var(--color-text-secondary); padding: 5px 10px; border-radius: var(--border-radius-md); cursor: pointer; white-space: nowrap; border: none; background: none; }
-  .pn-nav-link:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
-  .pn-nav-link.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; }
-  .pn-nav-actions { display: flex; align-items: center; gap: 8px; }
-  .pn-icon-btn { width: 34px; height: 34px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text-secondary); font-size: 16px; position: relative; }
-  .pn-icon-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
-  .pn-cart-badge { position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; border-radius: 50%; background: #534AB7; color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 500; border: 1.5px solid var(--color-background-primary); }
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-  /* SEARCH BAR */
-  .pn-search-bar { background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 10px 24px; display: flex; gap: 8px; align-items: center; }
-  .pn-search-wrap { flex: 1; position: relative; }
-  .pn-search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; }
-  .pn-search-input { width: 100%; height: 36px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); padding: 0 12px 0 34px; font-size: 13px; color: var(--color-text-primary); outline: none; }
-  .pn-search-input::placeholder { color: var(--color-text-tertiary); }
-  .pn-search-input:focus { border-color: #534AB7; box-shadow: 0 0 0 2px rgba(83,74,183,0.15); }
-  .pn-filter-btn { height: 36px; padding: 0 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); font-size: 13px; color: var(--color-text-secondary); cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .pn-filter-btn:hover { background: var(--color-background-secondary); }
+  /* ═══════════════ NAV ═══════════════ */
+  #topbar { background: var(--accent); color: #fff; text-align: center; font-size: 12px; padding: 7px; letter-spacing: 0.5px; }
+  #topbar span { opacity: 0.8; margin: 0 16px; }
+  #topbar strong { opacity: 1; }
+  nav { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border2); }
+  .nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; gap: 32px; }
+  .nav-logo { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .nav-logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .nav-logo-mark svg { width: 16px; height: 16px; }
+  .nav-links { display: flex; gap: 2px; flex: 1; }
+  .nav-link { font-size: 13px; color: var(--ink2); padding: 6px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; border: none; background: none; transition: background 0.15s, color 0.15s; }
+  .nav-link:hover, .nav-link.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+  .nav-search { flex: 1; max-width: 320px; position: relative; }
+  .nav-search input { width: 100%; height: 36px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); padding: 0 14px 0 38px; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+  .nav-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(83,69,184,0.12); background: #fff; }
+  .nav-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink3); pointer-events: none; }
+  .nav-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .nav-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink2); position: relative; transition: background 0.15s; font-size: 18px; }
+  .nav-btn:hover { background: var(--surface); color: var(--accent); }
+  .nav-cart-count { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: var(--coral); color: #fff; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+  .nav-cta { height: 36px; padding: 0 18px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.1s; white-space: nowrap; }
+  .nav-cta:hover { background: var(--accent2); }
+  .nav-cta:active { transform: scale(0.97); }
 
-  /* PAGES */
-  .pn-page { display: none; animation: fadeIn 0.18s ease; }
-  .pn-page.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  /* SEARCH DROPDOWN */
+  .search-dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid var(--border); border-radius: var(--r2); box-shadow: var(--shadow2); z-index: 999; overflow: hidden; display: none; }
+  .search-dropdown.open { display: block; animation: dropIn 0.15s ease; }
+  @keyframes dropIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .search-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink3); padding: 10px 14px 4px; font-weight: 600; }
+  .search-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer; font-size: 13px; color: var(--ink2); transition: background 0.1s; }
+  .search-item:hover { background: var(--surface); color: var(--ink); }
+  .search-item-icon { width: 28px; height: 28px; border-radius: 6px; background: var(--surface2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+  .search-item-name { font-weight: 500; }
+  .search-item-sub { font-size: 11px; color: var(--ink3); }
+  .search-trending-tag { display: inline-flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 4px 10px; font-size: 12px; color: var(--ink2); margin: 4px 4px 10px; cursor: pointer; transition: background 0.1s; }
+  .search-trending-tag:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
 
-  /* HERO */
-  .pn-hero { background: linear-gradient(135deg, #EEEDFE 0%, #E6F1FB 100%); border-radius: var(--border-radius-lg); margin: 20px 24px 0; padding: 40px 36px; display: flex; align-items: center; justify-content: space-between; overflow: hidden; position: relative; border: 0.5px solid #CECBF6; }
-  .pn-hero-text h1 { font-size: 26px; font-weight: 500; color: #26215C; line-height: 1.3; max-width: 280px; }
-  .pn-hero-text p { font-size: 14px; color: #534AB7; margin: 10px 0 20px; }
-  .pn-hero-cta { height: 38px; padding: 0 20px; background: #534AB7; color: #fff; border: none; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-sans); }
-  .pn-hero-cta:hover { background: #3C3489; }
-  .pn-hero-visual { display: flex; gap: 10px; }
-  .pn-hero-card { width: 80px; height: 96px; border-radius: var(--border-radius-md); background: rgba(255,255,255,0.7); border: 0.5px solid #AFA9EC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
-  .pn-hero-card i { font-size: 22px; color: #534AB7; }
-  .pn-hero-card span { font-size: 10px; color: #3C3489; font-weight: 500; text-align: center; }
-  .pn-hero-dots { display: flex; gap: 6px; margin-top: 16px; }
-  .pn-hero-dot { width: 6px; height: 6px; border-radius: 50%; background: #AFA9EC; }
-  .pn-hero-dot.on { background: #534AB7; width: 18px; border-radius: 3px; }
+  /* ═══════════════ PAGES ═══════════════ */
+  .page { display: none; }
+  .page.active { display: block; animation: pageIn 0.2s ease; }
+  @keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* CATEGORY CHIPS */
-  .pn-cats { display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; scrollbar-width: none; }
-  .pn-cats::-webkit-scrollbar { display: none; }
-  .pn-cat { height: 32px; padding: 0 14px; border-radius: 99px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 12px; color: var(--color-text-secondary); cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
-  .pn-cat:hover, .pn-cat.on { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; font-weight: 500; }
+  /* ═══════════════ HERO ═══════════════ */
+  .hero { background: var(--surface); min-height: 560px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 0; overflow: hidden; position: relative; border-bottom: 1px solid var(--border2); }
+  .hero-content { padding: 80px 64px 80px 80px; max-width: 640px; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; padding: 5px 12px; border-radius: 20px; margin-bottom: 24px; }
+  .hero-eyebrow-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+  .hero-title { font-size: clamp(36px, 5vw, 60px); font-weight: 800; line-height: 1.08; letter-spacing: -2px; color: var(--ink); margin-bottom: 20px; }
+  .hero-title em { color: var(--accent); font-style: normal; }
+  .hero-sub { font-size: 17px; color: var(--ink2); line-height: 1.7; margin-bottom: 36px; max-width: 440px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+  .btn-primary { height: 48px; padding: 0 28px; background: var(--accent); color: #fff; border: none; border-radius: var(--r); font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s, transform 0.1s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-ghost { height: 48px; padding: 0 28px; background: none; color: var(--ink); border: 1.5px solid var(--border); border-radius: var(--r); font-size: 15px; font-weight: 500; cursor: pointer; transition: border-color 0.15s, background 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .hero-stats { display: flex; gap: 32px; }
+  .hero-stat-num { font-size: 28px; font-weight: 800; color: var(--ink); letter-spacing: -1px; }
+  .hero-stat-label { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+  .hero-visual { background: #1a1a2e; height: 100%; min-height: 560px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; gap: 16px; }
+  .hero-cam-frame { width: 280px; height: 200px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .hero-cam-body { width: 200px; height: 140px; background: linear-gradient(145deg, #2a2a3e, #1a1a2a); border-radius: 16px; border: 2px solid rgba(255,255,255,0.15); position: relative; display: flex; align-items: center; justify-content: center; }
+  .hero-cam-lens { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #3a3a5e, #0a0a1a); border: 3px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(83,69,184,0.4); }
+  .hero-cam-lens-inner { width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #5345b8, #1a1040); border: 2px solid rgba(255,255,255,0.3); }
+  .hero-cam-flash { position: absolute; top: 18px; left: 24px; width: 16px; height: 12px; background: rgba(255,255,255,0.3); border-radius: 3px; }
+  .hero-cam-dial { position: absolute; top: 8px; right: 20px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+  .hero-badge { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 16px; color: #fff; text-align: center; }
+  .hero-badge-val { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .hero-badge-sub { font-size: 11px; opacity: 0.6; margin-top: 2px; }
+  .hero-floating-badges { display: flex; gap: 12px; }
+  .hero-glow { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(83,69,184,0.25), transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
 
-  /* SECTION HEADER */
-  .pn-sec { padding: 20px 24px 0; }
-  .pn-sec-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
-  .pn-sec-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
-  .pn-sec-link { font-size: 12px; color: #534AB7; cursor: pointer; }
-  .pn-sec-link:hover { text-decoration: underline; }
+  /* ═══════════════ SECTION WRAPPER ═══════════════ */
+  .section { max-width: 1280px; margin: 0 auto; padding: 64px 24px; }
+  .section-sm { max-width: 1280px; margin: 0 auto; padding: 40px 24px; }
+  .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+  .section-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--ink); }
+  .section-sub { font-size: 14px; color: var(--ink3); margin-top: 4px; }
+  .section-link { font-size: 13px; color: var(--accent); font-weight: 500; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+  .section-link:hover { text-decoration: underline; }
 
-  /* PRODUCT GRID */
-  .pn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
-  .pn-product { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
-  .pn-product:hover { border-color: var(--color-border-secondary); }
-  .pn-product-img { height: 110px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--color-text-tertiary); position: relative; }
-  .pn-product-badge { position: absolute; top: 8px; left: 8px; background: #FAECE7; color: #993C1D; font-size: 10px; padding: 2px 7px; border-radius: 99px; font-weight: 500; }
-  .pn-product-info { padding: 10px 12px; }
-  .pn-product-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; margin-bottom: 4px; }
-  .pn-product-sub { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 8px; }
-  .pn-product-row { display: flex; align-items: center; justify-content: space-between; }
-  .pn-product-price { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
-  .pn-add-btn { width: 26px; height: 26px; border-radius: 6px; background: #534AB7; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 14px; }
-  .pn-add-btn:hover { background: #3C3489; }
-  .pn-stars { display: flex; gap: 1px; margin-bottom: 4px; }
-  .pn-stars i { font-size: 10px; color: #BA7517; }
+  /* ═══════════════ CATEGORY STRIP ═══════════════ */
+  .cat-strip { background: #fff; border-bottom: 1px solid var(--border2); }
+  .cat-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; height: 52px; align-items: center; }
+  .cat-inner::-webkit-scrollbar { display: none; }
+  .cat-chip { height: 32px; padding: 0 14px; border-radius: 16px; border: 1px solid var(--border); background: none; font-size: 12px; font-weight: 500; color: var(--ink2); cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .cat-chip:hover, .cat-chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .cat-chip svg { width: 14px; height: 14px; }
 
-  /* CART PAGE */
-  .pn-cart-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; padding: 20px 24px; }
-  .pn-cart-items { display: flex; flex-direction: column; gap: 10px; }
-  .pn-cart-item { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; display: flex; gap: 14px; align-items: flex-start; }
-  .pn-cart-thumb { width: 60px; height: 60px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
-  .pn-cart-details { flex: 1; }
-  .pn-cart-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
-  .pn-cart-variant { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 10px; }
-  .pn-qty { display: flex; align-items: center; gap: 8px; }
-  .pn-qty-btn { width: 26px; height: 26px; border-radius: 6px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: var(--color-text-secondary); }
-  .pn-qty-val { font-size: 13px; font-weight: 500; min-width: 18px; text-align: center; color: var(--color-text-primary); }
-  .pn-cart-price { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
-  .pn-cart-remove { font-size: 12px; color: #993C1D; cursor: pointer; margin-top: 8px; background: none; border: none; font-family: var(--font-sans); }
+  /* ═══════════════ PRODUCT GRID ═══════════════ */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .product-card { background: #fff; border: 1px solid var(--border2); border-radius: var(--r2); overflow: hidden; cursor: pointer; transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; position: relative; }
+  .product-card:hover { box-shadow: var(--shadow2); transform: translateY(-3px); border-color: var(--border); }
+  .product-img { height: 180px; background: var(--surface); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .product-img-icon { font-size: 56px; transition: transform 0.3s; }
+  .product-card:hover .product-img-icon { transform: scale(1.08); }
+  .product-badge { position: absolute; top: 10px; left: 10px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-sale { background: #FAECE7; color: #993C1D; }
+  .badge-new { background: #EAF3DE; color: #3B6D11; }
+  .badge-hot { background: #FAEEDA; color: #854F0B; }
+  .badge-best { background: var(--accent-light); color: var(--accent2); }
+  .product-wishlist { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.9); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: background 0.15s; }
+  .product-wishlist:hover { background: #fff; }
+  .product-wishlist.liked { color: var(--coral); }
+  .product-info { padding: 14px 16px 16px; }
+  .product-brand { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink3); font-weight: 600; margin-bottom: 4px; }
+  .product-name { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 4px; }
+  .product-spec { font-size: 12px; color: var(--ink3); margin-bottom: 8px; }
+  .product-stars { display: flex; align-items: center; gap: 4px; margin-bottom: 10px; }
+  .stars { color: var(--gold); font-size: 11px; letter-spacing: 1px; }
+  .star-count { font-size: 11px; color: var(--ink3); }
+  .product-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
+  .product-price-old { font-size: 12px; color: var(--ink3); text-decoration: line-through; margin-left: 4px; font-weight: 400; }
+  .add-btn { width: 34px; height: 34px; border-radius: 8px; background: var(--accent); border: none; color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, transform 0.1s; font-weight: 300; }
+  .add-btn:hover { background: var(--accent2); }
+  .add-btn:active { transform: scale(0.92); }
 
-  /* ORDER SUMMARY */
-  .pn-summary { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 18px; height: fit-content; position: sticky; top: 64px; }
-  .pn-summary-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 14px; }
-  .pn-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; }
-  .pn-summary-row.total { font-weight: 500; color: var(--color-text-primary); font-size: 15px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 10px; margin-top: 4px; }
-  .pn-coupon { display: flex; gap: 6px; margin: 14px 0; }
-  .pn-coupon input { flex: 1; height: 32px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 0 10px; font-size: 12px; background: var(--color-background-secondary); color: var(--color-text-primary); outline: none; }
-  .pn-coupon button { height: 32px; padding: 0 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); font-size: 12px; cursor: pointer; color: var(--color-text-secondary); }
-  .pn-checkout-btn { width: 100%; height: 40px; background: #534AB7; border: none; border-radius: var(--border-radius-md); color: #fff; font-size: 14px; cursor: pointer; font-family: var(--font-sans); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
-  .pn-checkout-btn:hover { background: #3C3489; }
+  /* ═══════════════ BANNER STRIP ═══════════════ */
+  .banner-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .banner { border-radius: var(--r2); padding: 32px 28px; cursor: pointer; transition: transform 0.2s; position: relative; overflow: hidden; min-height: 180px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .banner:hover { transform: translateY(-2px); }
+  .banner-1 { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+  .banner-2 { background: linear-gradient(135deg, #0f6e56 0%, #085041 100%); }
+  .banner-3 { background: linear-gradient(135deg, #993C1D 0%, #4A1B0C 100%); }
+  .banner-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.6); font-weight: 600; margin-bottom: 8px; }
+  .banner-title { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.5px; }
+  .banner-link { font-size: 12px; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 4px; font-weight: 500; }
+  .banner-deco { position: absolute; top: 20px; right: 20px; font-size: 48px; opacity: 0.15; }
 
-  /* CHECKOUT PAGE */
-  .pn-checkout-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; padding: 20px 24px; }
-  .pn-steps { display: flex; gap: 0; margin-bottom: 20px; }
-  .pn-step { display: flex; align-items: center; gap: 8px; flex: 1; }
-  .pn-step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); flex-shrink: 0; }
-  .pn-step-num.done { background: #534AB7; color: #fff; border-color: #534AB7; }
-  .pn-step-num.cur { background: #EEEDFE; color: #534AB7; border-color: #AFA9EC; font-weight: 500; }
-  .pn-step-label { font-size: 12px; color: var(--color-text-secondary); }
-  .pn-step-label.cur { color: #534AB7; font-weight: 500; }
-  .pn-step-line { flex: 1; height: 0.5px; background: var(--color-border-tertiary); margin: 0 8px; }
-  .pn-form-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 20px; }
-  .pn-form-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 16px; }
-  .pn-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .pn-form-full { grid-column: 1 / -1; }
-  .pn-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 5px; display: block; }
-  .pn-field { height: 36px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 0 12px; font-size: 13px; background: var(--color-background-secondary); color: var(--color-text-primary); width: 100%; outline: none; font-family: var(--font-sans); }
-  .pn-field:focus { border-color: #534AB7; box-shadow: 0 0 0 2px rgba(83,74,183,0.12); background: var(--color-background-primary); }
-  .pn-pay-opts { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-  .pn-pay-opt { display: flex; align-items: center; gap: 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; cursor: pointer; }
-  .pn-pay-opt.sel { border-color: #AFA9EC; background: #EEEDFE; }
-  .pn-pay-opt i { font-size: 20px; color: #534AB7; }
-  .pn-pay-opt span { font-size: 13px; color: var(--color-text-primary); flex: 1; }
-  .pn-pay-opt .pn-radio { width: 16px; height: 16px; border-radius: 50%; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); display: flex; align-items: center; justify-content: center; }
-  .pn-pay-opt.sel .pn-radio::after { content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; background: #534AB7; }
-  .pn-form-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-  .pn-back-btn { height: 36px; padding: 0 16px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: none; font-size: 13px; cursor: pointer; color: var(--color-text-secondary); font-family: var(--font-sans); }
-  .pn-next-btn { height: 36px; padding: 0 20px; background: #534AB7; border: none; border-radius: var(--border-radius-md); color: #fff; font-size: 13px; cursor: pointer; font-family: var(--font-sans); }
-  .pn-next-btn:hover { background: #3C3489; }
+  /* ═══════════════ FEATURED / DEAL ═══════════════ */
+  .deal-card { background: var(--surface); border-radius: var(--r2); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; min-height: 340px; border: 1px solid var(--border2); }
+  .deal-visual { background: linear-gradient(145deg, #1a1a2e, #2a2040); display: flex; align-items: center; justify-content: center; padding: 48px; position: relative; overflow: hidden; }
+  .deal-visual-icon { font-size: 100px; z-index: 2; position: relative; filter: drop-shadow(0 0 30px rgba(83,69,184,0.5)); }
+  .deal-visual-glow { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(83,69,184,0.3), transparent 60%); }
+  .deal-content { padding: 48px; display: flex; flex-direction: column; justify-content: center; }
+  .deal-tag { display: inline-flex; align-items: center; gap: 6px; background: #FAECE7; color: #993C1D; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; }
+  .deal-title { font-size: clamp(22px, 3vw, 32px); font-weight: 800; color: var(--ink); letter-spacing: -1px; margin-bottom: 12px; line-height: 1.15; }
+  .deal-desc { font-size: 15px; color: var(--ink2); line-height: 1.65; margin-bottom: 24px; }
+  .deal-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 28px; }
+  .deal-price { font-size: 36px; font-weight: 900; color: var(--ink); letter-spacing: -1.5px; }
+  .deal-price-was { font-size: 18px; color: var(--ink3); text-decoration: line-through; }
+  .deal-save { background: var(--teal); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+  .deal-timer { display: flex; gap: 8px; margin-bottom: 24px; }
+  .timer-block { background: var(--ink); color: #fff; border-radius: 8px; padding: 10px 14px; text-align: center; min-width: 56px; }
+  .timer-num { font-size: 22px; font-weight: 800; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+  .timer-label { font-size: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
-  /* TOAST */
-  .pn-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: #26215C; color: #fff; padding: 10px 18px; border-radius: var(--border-radius-md); font-size: 13px; z-index: 999; transition: transform 0.25s ease; white-space: nowrap; display: flex; align-items: center; gap: 8px; pointer-events: none; }
-  .pn-toast.show { transform: translateX(-50%) translateY(0); }
+  /* ═══════════════ REVIEWS ═══════════════ */
+  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .review-card { background: #fff; border: 1px solid var(--border2); border-radius: var(--r2); padding: 22px; }
+  .review-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .review-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .review-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .review-meta { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+  .review-stars { color: var(--gold); font-size: 13px; margin-bottom: 10px; }
+  .review-text { font-size: 13px; color: var(--ink2); line-height: 1.65; }
+  .review-product { font-size: 11px; color: var(--ink3); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border2); display: flex; align-items: center; gap: 4px; }
+  .review-verified { display: inline-flex; align-items: center; gap: 3px; background: #EAF3DE; color: #3B6D11; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; }
 
-  /* SEARCH SUGGESTIONS */
-  .pn-suggest { position: absolute; top: 40px; left: 0; right: 0; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); z-index: 200; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: none; }
-  .pn-suggest-item { padding: 8px 14px; font-size: 13px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .pn-suggest-item:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
-  .pn-suggest-item i { font-size: 14px; color: var(--color-text-tertiary); }
-  .pn-empty { padding: 40px 24px; text-align: center; color: var(--color-text-tertiary); font-size: 14px; }
+  /* ═══════════════ BRANDS ═══════════════ */
+  .brands-row { display: flex; align-items: center; justify-content: center; gap: 48px; padding: 32px 24px; flex-wrap: wrap; }
+  .brand-tag { font-size: 22px; font-weight: 800; color: var(--surface2); letter-spacing: -1px; cursor: pointer; transition: color 0.2s; }
+  .brand-tag:hover { color: var(--ink3); }
+
+  /* ═══════════════ CART SIDEBAR ═══════════════ */
+  .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; display: none; backdrop-filter: blur(4px); }
+  .cart-overlay.open { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .cart-sidebar { position: fixed; right: 0; top: 0; bottom: 0; width: 420px; background: #fff; z-index: 1001; display: flex; flex-direction: column; box-shadow: -8px 0 48px rgba(0,0,0,0.12); transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .cart-sidebar.open { transform: translateX(0); }
+  .cart-header { padding: 20px 24px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; }
+  .cart-header-title { font-size: 18px; font-weight: 700; color: var(--ink); }
+  .cart-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; color: var(--ink2); }
+  .cart-close:hover { background: var(--surface); }
+  .cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .cart-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px; border: 1px solid var(--border2); border-radius: var(--r); }
+  .cart-item-thumb { width: 64px; height: 64px; background: var(--surface); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .cart-item-variant { font-size: 11px; color: var(--ink3); margin-bottom: 8px; }
+  .qty-ctrl { display: flex; align-items: center; gap: 8px; }
+  .qty-btn { width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--ink2); line-height: 1; transition: background 0.1s; }
+  .qty-btn:hover { background: var(--surface2); }
+  .qty-val { font-size: 14px; font-weight: 600; min-width: 20px; text-align: center; color: var(--ink); }
+  .cart-item-price { font-size: 15px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .cart-item-remove { font-size: 11px; color: var(--coral); cursor: pointer; background: none; border: none; padding: 0; font-family: inherit; margin-top: 4px; }
+  .cart-footer { padding: 20px 24px; border-top: 1px solid var(--border2); }
+  .cart-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink2); margin-bottom: 6px; }
+  .cart-summary-row.big { font-size: 17px; font-weight: 700; color: var(--ink); border-top: 1px solid var(--border2); padding-top: 10px; margin-top: 6px; }
+  .cart-checkout-btn { width: 100%; height: 50px; background: var(--accent); color: #fff; border: none; border-radius: var(--r); font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .cart-checkout-btn:hover { background: var(--accent2); }
+  .cart-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--ink3); }
+  .cart-empty-icon { font-size: 56px; opacity: 0.3; }
+
+  /* ═══════════════ MODAL ═══════════════ */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 24px; }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+  .modal { background: #fff; border-radius: var(--r2); width: 100%; max-width: 760px; max-height: 90vh; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; }
+  .modal-gallery { background: var(--surface); display: flex; align-items: center; justify-content: center; padding: 48px; border-radius: var(--r2) 0 0 var(--r2); position: relative; }
+  .modal-gallery-icon { font-size: 100px; }
+  .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.1); border: none; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: rgba(0,0,0,0.2); }
+  .modal-info { padding: 40px; display: flex; flex-direction: column; }
+  .modal-brand { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink3); font-weight: 600; margin-bottom: 6px; }
+  .modal-name { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.2; }
+  .modal-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+  .modal-stars { color: var(--gold); font-size: 14px; }
+  .modal-rating-count { font-size: 12px; color: var(--ink3); }
+  .modal-desc { font-size: 14px; color: var(--ink2); line-height: 1.7; margin-bottom: 20px; }
+  .modal-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+  .modal-spec { background: var(--surface); border-radius: 8px; padding: 10px 12px; }
+  .modal-spec-key { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink3); font-weight: 600; }
+  .modal-spec-val { font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 2px; }
+  .modal-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+  .modal-price { font-size: 30px; font-weight: 900; color: var(--ink); letter-spacing: -1px; }
+  .modal-price-was { font-size: 16px; color: var(--ink3); text-decoration: line-through; }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-add-btn { flex: 1; height: 46px; background: var(--accent); color: #fff; border: none; border-radius: var(--r); font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .modal-add-btn:hover { background: var(--accent2); }
+  .modal-wish-btn { width: 46px; height: 46px; border-radius: var(--r); border: 1.5px solid var(--border); background: none; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .modal-wish-btn:hover { background: var(--surface); }
+
+  /* ═══════════════ TOAST ═══════════════ */
+  .toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 3000; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+  .toast { background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow2); animation: toastIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275); max-width: 380px; }
+  .toast.removing { animation: toastOut 0.25s ease forwards; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(16px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes toastOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(8px) scale(0.95); } }
+  .toast-icon { font-size: 16px; }
+
+  /* ═══════════════ CHECKOUT PAGE ═══════════════ */
+  .checkout-layout { max-width: 1000px; margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
+  .checkout-steps { display: flex; align-items: center; gap: 0; margin-bottom: 32px; grid-column: 1 / -1; }
+  .chk-step { display: flex; align-items: center; gap: 10px; flex: 1; }
+  .chk-step-circle { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border); background: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: var(--ink3); flex-shrink: 0; transition: all 0.3s; }
+  .chk-step-circle.done { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chk-step-circle.active { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .chk-step-label { font-size: 13px; color: var(--ink3); font-weight: 500; }
+  .chk-step-label.active { color: var(--accent); font-weight: 600; }
+  .chk-step-line { flex: 1; height: 1px; background: var(--border); margin: 0 12px; }
+  .form-card { background: #fff; border: 1px solid var(--border2); border-radius: var(--r2); padding: 28px; }
+  .form-card-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; height: 42px; border: 1px solid var(--border); border-radius: 8px; padding: 0 14px; font-size: 14px; color: var(--ink); background: var(--surface); outline: none; transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit; }
+  .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(83,69,184,0.1); background: #fff; }
+  .form-input::placeholder { color: var(--ink3); }
+  .pay-option { display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--border); border-radius: var(--r); padding: 14px 16px; cursor: pointer; transition: all 0.15s; margin-bottom: 10px; }
+  .pay-option:hover { border-color: var(--accent); background: var(--accent-light); }
+  .pay-option.selected { border-color: var(--accent); background: var(--accent-light); }
+  .pay-option-icon { font-size: 24px; width: 36px; text-align: center; }
+  .pay-option-info { flex: 1; }
+  .pay-option-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .pay-option-sub { font-size: 12px; color: var(--ink3); }
+  .pay-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; }
+  .pay-option.selected .pay-radio { border-color: var(--accent); }
+  .pay-option.selected .pay-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: block; }
+  .chk-summary { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r2); padding: 24px; height: fit-content; position: sticky; top: 88px; }
+  .chk-summary-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
+  .chk-summary-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .chk-item-thumb { width: 44px; height: 44px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid var(--border2); flex-shrink: 0; }
+  .chk-item-name { font-size: 12px; font-weight: 600; color: var(--ink); }
+  .chk-item-sub { font-size: 11px; color: var(--ink3); }
+  .chk-item-price { font-size: 13px; font-weight: 700; color: var(--ink); margin-left: auto; }
+  .chk-divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .chk-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink2); margin-bottom: 7px; }
+  .chk-row.total { font-size: 17px; font-weight: 700; color: var(--ink); margin-top: 10px; }
+  .chk-place-btn { width: 100%; height: 48px; background: var(--teal); border: none; border-radius: var(--r); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; font-family: inherit; }
+  .chk-place-btn:hover { background: #085041; }
+  .form-btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; gap: 12px; }
+  .btn-back { height: 42px; padding: 0 20px; border: 1px solid var(--border); border-radius: 8px; background: none; font-size: 14px; cursor: pointer; color: var(--ink2); font-family: inherit; transition: background 0.15s; }
+  .btn-back:hover { background: var(--surface); }
+  .btn-next { height: 42px; padding: 0 24px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .btn-next:hover { background: var(--accent2); }
+
+  /* ═══════════════ FEATURES ═══════════════ */
+  .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .feature-card { text-align: center; padding: 32px 20px; background: var(--surface); border-radius: var(--r2); }
+  .feature-icon { font-size: 36px; margin-bottom: 14px; }
+  .feature-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .feature-desc { font-size: 13px; color: var(--ink3); line-height: 1.6; }
+
+  /* ═══════════════ NEWSLETTER ═══════════════ */
+  .newsletter { background: var(--accent); border-radius: var(--r2); padding: 56px; text-align: center; margin: 0 24px; }
+  .newsletter-title { font-size: 32px; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 10px; }
+  .newsletter-sub { font-size: 16px; color: rgba(255,255,255,0.7); margin-bottom: 28px; }
+  .newsletter-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto; }
+  .newsletter-input { flex: 1; height: 48px; border: none; border-radius: var(--r); padding: 0 18px; font-size: 15px; background: rgba(255,255,255,0.12); color: #fff; outline: none; font-family: inherit; }
+  .newsletter-input::placeholder { color: rgba(255,255,255,0.5); }
+  .newsletter-input:focus { background: rgba(255,255,255,0.2); }
+  .newsletter-btn { height: 48px; padding: 0 24px; background: #fff; color: var(--accent); border: none; border-radius: var(--r); font-size: 15px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; font-family: inherit; }
+  .newsletter-btn:hover { opacity: 0.92; }
+
+  /* ═══════════════ FOOTER ═══════════════ */
+  footer { background: var(--ink); color: rgba(255,255,255,0.6); margin-top: 80px; }
+  .footer-inner { max-width: 1280px; margin: 0 auto; padding: 64px 24px 32px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+  .footer-brand { color: rgba(255,255,255,0.9); font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .footer-desc { font-size: 13px; line-height: 1.7; max-width: 260px; }
+  .footer-col-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.9); margin-bottom: 16px; }
+  .footer-link { font-size: 13px; display: block; margin-bottom: 10px; cursor: pointer; transition: color 0.15s; }
+  .footer-link:hover { color: rgba(255,255,255,0.9); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding: 20px 24px; text-align: center; font-size: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { min-height: 240px; }
+    .hero-content { padding: 48px 24px; }
+    .banner-grid { grid-template-columns: 1fr; }
+    .deal-card { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .checkout-layout { grid-template-columns: 1fr; }
+    .modal { grid-template-columns: 1fr; }
+    .modal-gallery { min-height: 200px; border-radius: var(--r2) var(--r2) 0 0; }
+    .cart-sidebar { width: 100%; }
+    .nav-links { display: none; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-full { grid-column: 1; }
+  }
 </style>
+</head>
+<body>
 
-<h2 class="sr-only">PixelNest e-commerce wireframe — interactive prototype showing homepage, product grid, cart, and checkout flows</h2>
+<!-- TOP BAR -->
+<div id="topbar">
+  <strong>🎉 Summer Sale — Up to 40% off</strong>
+  <span>|</span>
+  <span>Free shipping on orders over ₹5,000</span>
+  <span>|</span>
+  <span>Use code <strong>PIXEL20</strong> for extra 20% off</span>
+</div>
 
-<div class="pn-root" id="pnRoot">
-
-  <!-- NAV -->
-  <nav class="pn-nav">
-    <div class="pn-logo"><div class="pn-logo-dot"></div>PixelNest</div>
-    <div class="pn-nav-links">
-      <button class="pn-nav-link active" onclick="showPage('home',this)">Home</button>
-      <button class="pn-nav-link" onclick="showPage('home',this)">Cameras</button>
-      <button class="pn-nav-link" onclick="showPage('home',this)">Lenses</button>
-      <button class="pn-nav-link" onclick="showPage('home',this)">Accessories</button>
-      <button class="pn-nav-link" onclick="showPage('home',this)">Deals</button>
-      <button class="pn-nav-link" onclick="showPage('home',this)">Support</button>
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="showPage('home')">
+      <div class="nav-logo-mark">
+        <svg viewBox="0 0 16 16" fill="none">
+          <circle cx="5" cy="8" r="3" fill="white"/>
+          <circle cx="11" cy="5" r="2" fill="rgba(255,255,255,0.5)"/>
+          <circle cx="11" cy="11" r="1.5" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+      </div>
+      PixelNest
     </div>
-    <div class="pn-nav-actions">
-      <div class="pn-icon-btn" title="Account" onclick=""><i class="ti ti-user" aria-hidden="true"></i></div>
-      <div class="pn-icon-btn" title="Wishlist" onclick=""><i class="ti ti-heart" aria-hidden="true"></i></div>
-      <div class="pn-icon-btn" title="Cart" onclick="showPage('cart',null)" style="position:relative;">
-        <i class="ti ti-shopping-bag" aria-hidden="true"></i>
-        <div class="pn-cart-badge" id="cartBadge">3</div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="showPage('home'); setActive(this)">Home</button>
+      <button class="nav-link" onclick="filterCat('Cameras'); showPage('home'); setActive(this)">Cameras</button>
+      <button class="nav-link" onclick="filterCat('Lenses'); showPage('home'); setActive(this)">Lenses</button>
+      <button class="nav-link" onclick="filterCat('Lighting'); showPage('home'); setActive(this)">Lighting</button>
+      <button class="nav-link" onclick="filterCat('Accessories'); showPage('home'); setActive(this)">Accessories</button>
+      <button class="nav-link" onclick="filterCat('Bags'); showPage('home'); setActive(this)">Bags</button>
+    </div>
+    <div class="nav-search">
+      <span class="nav-search-icon">🔍</span>
+      <input id="searchInput" placeholder="Search cameras, lenses, accessories…" autocomplete="off"
+        oninput="onSearch(this.value)" onfocus="showSearch()" />
+      <div class="search-dropdown" id="searchDropdown">
+        <div class="search-section-label">Trending searches</div>
+        <div style="padding: 4px 12px 8px; display:flex; flex-wrap:wrap;">
+          <span class="search-trending-tag" onclick="doSearch('Sony Alpha')">📷 Sony Alpha</span>
+          <span class="search-trending-tag" onclick="doSearch('Prime lens')">🔭 Prime lens</span>
+          <span class="search-trending-tag" onclick="doSearch('LED light')">💡 LED light</span>
+          <span class="search-trending-tag" onclick="doSearch('Tripod')">🦯 Tripod</span>
+        </div>
+        <div class="search-section-label">Recent</div>
+        <div id="searchResults"></div>
       </div>
     </div>
-  </nav>
-
-  <!-- SEARCH BAR -->
-  <div class="pn-search-bar">
-    <div class="pn-search-wrap" id="searchWrap">
-      <i class="ti ti-search" aria-hidden="true"></i>
-      <input class="pn-search-input" placeholder="Search cameras, lenses, accessories..." id="searchInput" autocomplete="off" />
-      <div class="pn-suggest" id="suggestBox">
-        <div class="pn-suggest-item"><i class="ti ti-trending-up" aria-hidden="true"></i>Sony Alpha mirrorless cameras</div>
-        <div class="pn-suggest-item"><i class="ti ti-trending-up" aria-hidden="true"></i>Canon EF 50mm prime lens</div>
-        <div class="pn-suggest-item"><i class="ti ti-trending-up" aria-hidden="true"></i>Neutral density filter kit</div>
-        <div class="pn-suggest-item"><i class="ti ti-clock" aria-hidden="true"></i>Tripods under ₹5000</div>
-      </div>
+    <div class="nav-actions">
+      <button class="nav-btn" title="Wishlist">❤️</button>
+      <button class="nav-btn" title="Account">👤</button>
+      <button class="nav-btn" title="Cart" onclick="openCart()">
+        🛒
+        <span class="nav-cart-count" id="cartCount">0</span>
+      </button>
+      <button class="nav-cta" onclick="showPage('checkout')">Checkout</button>
     </div>
-    <button class="pn-filter-btn"><i class="ti ti-adjustments-horizontal" aria-hidden="true" style="font-size:14px;"></i>Filters</button>
-    <button class="pn-filter-btn"><i class="ti ti-arrows-sort" aria-hidden="true" style="font-size:14px;"></i>Sort</button>
   </div>
+</nav>
 
-  <!-- HOME PAGE -->
-  <div class="pn-page active" id="page-home">
-    <!-- Hero -->
-    <div class="pn-hero">
-      <div class="pn-hero-text">
-        <h1>Capture the world, one pixel at a time.</h1>
-        <p>New arrivals — up to 30% off this week</p>
-        <button class="pn-hero-cta" onclick="showPage('home',null)">Shop now <i class="ti ti-arrow-right" aria-hidden="true" style="font-size:14px;"></i></button>
-        <div class="pn-hero-dots" style="margin-top:16px;">
-          <div class="pn-hero-dot on"></div>
-          <div class="pn-hero-dot"></div>
-          <div class="pn-hero-dot"></div>
+<!-- ═══════════════════ HOME PAGE ═══════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>New Season Drop</div>
+      <h1 class="hero-title">Every shot, <em>perfectly</em> captured.</h1>
+      <p class="hero-sub">Premium cameras, lenses, and accessories for creators who refuse to compromise. From first frame to final edit.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('best-sellers').scrollIntoView({behavior:'smooth'})">Shop now →</button>
+        <button class="btn-ghost" onclick="openModal(products[0])">View featured gear</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">50K+</div>
+          <div class="hero-stat-label">Happy photographers</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">800+</div>
+          <div class="hero-stat-label">Products in stock</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">4.9★</div>
+          <div class="hero-stat-label">Average rating</div>
         </div>
       </div>
-      <div class="pn-hero-visual">
-        <div class="pn-hero-card"><i class="ti ti-camera" aria-hidden="true"></i><span>DSLRs</span></div>
-        <div class="pn-hero-card"><i class="ti ti-aperture" aria-hidden="true"></i><span>Lenses</span></div>
-        <div class="pn-hero-card"><i class="ti ti-battery-charging" aria-hidden="true"></i><span>Accessories</span></div>
-      </div>
     </div>
-
-    <!-- Category chips -->
-    <div class="pn-cats">
-      <div class="pn-cat on"><i class="ti ti-layout-grid" aria-hidden="true" style="font-size:13px;"></i>All</div>
-      <div class="pn-cat"><i class="ti ti-camera" aria-hidden="true" style="font-size:13px;"></i>Mirrorless</div>
-      <div class="pn-cat"><i class="ti ti-camera" aria-hidden="true" style="font-size:13px;"></i>DSLR</div>
-      <div class="pn-cat"><i class="ti ti-aperture" aria-hidden="true" style="font-size:13px;"></i>Prime Lenses</div>
-      <div class="pn-cat"><i class="ti ti-aperture" aria-hidden="true" style="font-size:13px;"></i>Zoom Lenses</div>
-      <div class="pn-cat"><i class="ti ti-device-camera" aria-hidden="true" style="font-size:13px;"></i>Film</div>
-      <div class="pn-cat"><i class="ti ti-box" aria-hidden="true" style="font-size:13px;"></i>Bags & Cases</div>
-      <div class="pn-cat"><i class="ti ti-bulb" aria-hidden="true" style="font-size:13px;"></i>Lighting</div>
-    </div>
-
-    <!-- Best Sellers -->
-    <div class="pn-sec">
-      <div class="pn-sec-head">
-        <div class="pn-sec-title">Best sellers</div>
-        <div class="pn-sec-link">View all →</div>
-      </div>
-      <div class="pn-grid" id="productGrid"></div>
-    </div>
-
-    <!-- New Arrivals -->
-    <div class="pn-sec" style="margin-bottom:24px;">
-      <div class="pn-sec-head">
-        <div class="pn-sec-title">New arrivals</div>
-        <div class="pn-sec-link">View all →</div>
-      </div>
-      <div class="pn-grid" id="newGrid"></div>
-    </div>
-  </div>
-
-  <!-- CART PAGE -->
-  <div class="pn-page" id="page-cart">
-    <div class="pn-sec-head" style="padding: 20px 24px 0;">
-      <div class="pn-sec-title" style="font-size:17px;">Your cart <span style="color:var(--color-text-tertiary); font-weight:400; font-size:13px;" id="cartCount">(3 items)</span></div>
-      <div class="pn-sec-link" onclick="showPage('home',null)">← Continue shopping</div>
-    </div>
-    <div class="pn-cart-layout">
-      <div class="pn-cart-items" id="cartItems"></div>
-      <div class="pn-summary">
-        <div class="pn-summary-title">Order summary</div>
-        <div class="pn-summary-row"><span>Subtotal</span><span>₹1,04,497</span></div>
-        <div class="pn-summary-row"><span>Shipping</span><span style="color:#0F6E56;">Free</span></div>
-        <div class="pn-summary-row"><span>Tax (18% GST)</span><span>₹18,809</span></div>
-        <div class="pn-coupon">
-          <input placeholder="Promo code" />
-          <button>Apply</button>
+    <div class="hero-visual">
+      <div class="hero-glow"></div>
+      <div class="hero-cam-frame">
+        <div class="hero-cam-body">
+          <div class="hero-cam-flash"></div>
+          <div class="hero-cam-dial"></div>
+          <div class="hero-cam-lens">
+            <div class="hero-cam-lens-inner"></div>
+          </div>
         </div>
-        <div class="pn-summary-row total"><span>Total</span><span>₹1,23,306</span></div>
-        <button class="pn-checkout-btn" onclick="showPage('checkout',null)">
-          <i class="ti ti-lock" aria-hidden="true" style="font-size:15px;"></i>Proceed to checkout
-        </button>
-        <p style="text-align:center; font-size:11px; color:var(--color-text-tertiary); margin-top:10px;">Secured by SSL · 256-bit encryption</p>
+      </div>
+      <div class="hero-floating-badges">
+        <div class="hero-badge">
+          <div class="hero-badge-val">61MP</div>
+          <div class="hero-badge-sub">Resolution</div>
+        </div>
+        <div class="hero-badge">
+          <div class="hero-badge-val">8K</div>
+          <div class="hero-badge-sub">Video</div>
+        </div>
+        <div class="hero-badge">
+          <div class="hero-badge-val">ISO 204K</div>
+          <div class="hero-badge-sub">Sensitivity</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- CHECKOUT PAGE -->
-  <div class="pn-page" id="page-checkout">
-    <div class="pn-sec-head" style="padding: 20px 24px 0;">
-      <div class="pn-sec-title" style="font-size:17px;">Checkout</div>
-      <div class="pn-sec-link" onclick="showPage('cart',null)">← Back to cart</div>
+  <!-- CATEGORY STRIP -->
+  <div class="cat-strip">
+    <div class="cat-inner" id="catStrip">
+      <button class="cat-chip on" onclick="filterCat('All')">📷 All</button>
+      <button class="cat-chip" onclick="filterCat('Cameras')">📷 Cameras</button>
+      <button class="cat-chip" onclick="filterCat('Lenses')">🔭 Lenses</button>
+      <button class="cat-chip" onclick="filterCat('Lighting')">💡 Lighting</button>
+      <button class="cat-chip" onclick="filterCat('Bags')">🎒 Bags</button>
+      <button class="cat-chip" onclick="filterCat('Tripods')">🦯 Tripods</button>
+      <button class="cat-chip" onclick="filterCat('Accessories')">🎛 Accessories</button>
+      <button class="cat-chip" onclick="filterCat('Film')">🎞 Film</button>
     </div>
-    <div class="pn-checkout-layout">
+  </div>
+
+  <!-- BANNERS -->
+  <div class="section-sm">
+    <div class="banner-grid">
+      <div class="banner banner-1">
+        <div class="banner-deco">📷</div>
+        <div class="banner-eyebrow">New arrival</div>
+        <div class="banner-title">Sony Alpha 7R V</div>
+        <div class="banner-link">Explore now →</div>
+      </div>
+      <div class="banner banner-2">
+        <div class="banner-deco">💡</div>
+        <div class="banner-eyebrow">Lighting sale</div>
+        <div class="banner-title">Studio setups from ₹8,999</div>
+        <div class="banner-link">Shop lighting →</div>
+      </div>
+      <div class="banner banner-3">
+        <div class="banner-deco">🔭</div>
+        <div class="banner-eyebrow">Lens week</div>
+        <div class="banner-title">Prime lenses up to 40% off</div>
+        <div class="banner-link">View deals →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEST SELLERS -->
+  <div class="section" id="best-sellers">
+    <div class="section-head">
       <div>
-        <!-- Steps -->
-        <div class="pn-steps" id="checkoutSteps">
-          <div class="pn-step">
-            <div class="pn-step-num done" id="s1"><i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i></div>
-            <div class="pn-step-label">Account</div>
-          </div>
-          <div class="pn-step-line"></div>
-          <div class="pn-step">
-            <div class="pn-step-num cur" id="s2">2</div>
-            <div class="pn-step-label cur" id="sl2">Shipping</div>
-          </div>
-          <div class="pn-step-line"></div>
-          <div class="pn-step">
-            <div class="pn-step-num" id="s3">3</div>
-            <div class="pn-step-label" id="sl3">Payment</div>
-          </div>
-          <div class="pn-step-line"></div>
-          <div class="pn-step">
-            <div class="pn-step-num" id="s4">4</div>
-            <div class="pn-step-label" id="sl4">Review</div>
-          </div>
-        </div>
+        <div class="section-title">Best sellers</div>
+        <div class="section-sub">What photographers are buying right now</div>
+      </div>
+      <div class="section-link" onclick="filterCat('All')">View all products →</div>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
 
-        <!-- Step 2: Shipping -->
-        <div id="stepShipping">
-          <div class="pn-form-card">
-            <div class="pn-form-title"><i class="ti ti-truck" aria-hidden="true" style="font-size:16px; vertical-align:-2px; margin-right:6px;"></i>Shipping information</div>
-            <div class="pn-form-grid">
-              <div>
-                <label class="pn-label">First name</label>
-                <input class="pn-field" placeholder="Arjun" />
-              </div>
-              <div>
-                <label class="pn-label">Last name</label>
-                <input class="pn-field" placeholder="Sharma" />
-              </div>
-              <div class="pn-form-full">
-                <label class="pn-label">Address line 1</label>
-                <input class="pn-field" placeholder="12, MG Road" />
-              </div>
-              <div class="pn-form-full">
-                <label class="pn-label">Address line 2 (optional)</label>
-                <input class="pn-field" placeholder="Apartment, suite, etc." />
-              </div>
-              <div>
-                <label class="pn-label">City</label>
-                <input class="pn-field" placeholder="Mumbai" />
-              </div>
-              <div>
-                <label class="pn-label">PIN code</label>
-                <input class="pn-field" placeholder="400001" />
-              </div>
-              <div class="pn-form-full">
-                <label class="pn-label">Phone number</label>
-                <input class="pn-field" placeholder="+91 98765 43210" />
-              </div>
+  <!-- DEAL OF THE DAY -->
+  <div class="section" style="padding-top:0;">
+    <div class="deal-card">
+      <div class="deal-visual">
+        <div class="deal-visual-glow"></div>
+        <div class="deal-visual-icon">📷</div>
+      </div>
+      <div class="deal-content">
+        <div class="deal-tag">🔥 Deal of the day</div>
+        <div class="deal-title">Sony Alpha A1 Full-Frame Mirrorless</div>
+        <div class="deal-desc">50.1MP Exmor RS BSI CMOS sensor. 8K30p & 4K120p video. 30fps continuous shooting. The pinnacle of full-frame performance for professionals.</div>
+        <div class="deal-timer" id="dealTimer">
+          <div class="timer-block"><div class="timer-num" id="th">04</div><div class="timer-label">Hrs</div></div>
+          <div class="timer-block"><div class="timer-num" id="tm">32</div><div class="timer-label">Min</div></div>
+          <div class="timer-block"><div class="timer-num" id="ts">18</div><div class="timer-label">Sec</div></div>
+        </div>
+        <div class="deal-price-row">
+          <div class="deal-price">₹4,49,999</div>
+          <div class="deal-price-was">₹5,99,999</div>
+          <div class="deal-save">Save 25%</div>
+        </div>
+        <button class="btn-primary" onclick="addToCartDirect('Sony Alpha A1','📷','₹4,49,999')">Add to cart →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW ARRIVALS -->
+  <div class="section" style="padding-top:0; background: var(--surface); margin: 0; max-width: 100%; padding-left:0; padding-right:0;">
+    <div style="max-width:1280px; margin:0 auto; padding:64px 24px;">
+      <div class="section-head">
+        <div>
+          <div class="section-title">New arrivals</div>
+          <div class="section-sub">Just landed this week</div>
+        </div>
+        <div class="section-link">View all →</div>
+      </div>
+      <div class="product-grid" id="newArrivalsGrid"></div>
+    </div>
+  </div>
+
+  <!-- BRANDS -->
+  <div class="section" style="padding-top:24px; padding-bottom:24px; border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);">
+    <div style="font-size:12px; text-align:center; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink3); font-weight:600; margin-bottom:24px;">Authorised reseller for</div>
+    <div class="brands-row">
+      <div class="brand-tag">SONY</div>
+      <div class="brand-tag">CANON</div>
+      <div class="brand-tag">NIKON</div>
+      <div class="brand-tag">FUJIFILM</div>
+      <div class="brand-tag">LEICA</div>
+      <div class="brand-tag">GODOX</div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">What our customers say</div>
+        <div class="section-sub">4.9 out of 5 from 12,400+ verified reviews</div>
+      </div>
+    </div>
+    <div class="reviews-grid" id="reviewsGrid"></div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section" style="padding-top:0;">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🚚</div>
+        <div class="feature-title">Free shipping</div>
+        <div class="feature-desc">On all orders over ₹5,000. Express delivery in 2–3 business days.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Secure payments</div>
+        <div class="feature-desc">256-bit SSL encryption. UPI, cards, net banking, EMI available.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">↩️</div>
+        <div class="feature-title">30-day returns</div>
+        <div class="feature-desc">Not happy? Return any item within 30 days for a full refund.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛠</div>
+        <div class="feature-title">Warranty support</div>
+        <div class="feature-desc">Authorised service centres across 120+ cities in India.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWSLETTER -->
+  <div style="max-width:1280px; margin:0 auto; padding:0 24px 64px;">
+    <div class="newsletter">
+      <div class="newsletter-title">Stay in the frame.</div>
+      <div class="newsletter-sub">Get early access to deals, new arrivals, and photography tips. No spam, ever.</div>
+      <div class="newsletter-form">
+        <input class="newsletter-input" placeholder="Enter your email" id="nlEmail" />
+        <button class="newsletter-btn" onclick="subscribeNL()">Subscribe</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #page-home -->
+
+<!-- ═══════════════════ CHECKOUT PAGE ═══════════════════ -->
+<div class="page" id="page-checkout">
+  <div class="checkout-layout">
+    <!-- Steps -->
+    <div class="checkout-steps" id="chkSteps">
+      <div class="chk-step">
+        <div class="chk-step-circle done" id="cs1">✓</div>
+        <div class="chk-step-label active" id="csl1">Account</div>
+      </div>
+      <div class="chk-step-line"></div>
+      <div class="chk-step">
+        <div class="chk-step-circle active" id="cs2">2</div>
+        <div class="chk-step-label active" id="csl2">Shipping</div>
+      </div>
+      <div class="chk-step-line"></div>
+      <div class="chk-step">
+        <div class="chk-step-circle" id="cs3">3</div>
+        <div class="chk-step-label" id="csl3">Payment</div>
+      </div>
+      <div class="chk-step-line"></div>
+      <div class="chk-step">
+        <div class="chk-step-circle" id="cs4">4</div>
+        <div class="chk-step-label" id="csl4">Review</div>
+      </div>
+    </div>
+
+    <!-- Form area -->
+    <div>
+      <!-- Step 2: Shipping -->
+      <div id="chkShipping">
+        <div class="form-card">
+          <div class="form-card-title">🚚 Shipping information</div>
+          <div class="form-grid">
+            <div>
+              <label class="form-label">First name</label>
+              <input class="form-input" placeholder="Arjun" />
             </div>
-            <div style="margin-top:14px;">
-              <div class="pn-form-title" style="font-size:13px; margin-bottom:10px;">Delivery method</div>
-              <div style="display:flex; gap:8px;">
-                <div class="pn-pay-opt sel" style="flex:1;">
-                  <i class="ti ti-bolt" aria-hidden="true"></i><span><strong style="font-weight:500;">Express</strong><br><span style="font-size:11px; color:var(--color-text-secondary);">2–3 days · Free</span></span>
-                  <div class="pn-radio"></div>
+            <div>
+              <label class="form-label">Last name</label>
+              <input class="form-input" placeholder="Sharma" />
+            </div>
+            <div class="form-full">
+              <label class="form-label">Email address</label>
+              <input class="form-input" placeholder="arjun@example.com" type="email" />
+            </div>
+            <div class="form-full">
+              <label class="form-label">Phone</label>
+              <input class="form-input" placeholder="+91 98765 43210" type="tel" />
+            </div>
+            <div class="form-full">
+              <label class="form-label">Address</label>
+              <input class="form-input" placeholder="12, MG Road, Bandra West" />
+            </div>
+            <div>
+              <label class="form-label">City</label>
+              <input class="form-input" placeholder="Mumbai" />
+            </div>
+            <div>
+              <label class="form-label">PIN code</label>
+              <input class="form-input" placeholder="400001" />
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="form-label" style="margin-bottom:10px;">Delivery method</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div class="pay-option selected">
+                <div class="pay-option-icon">⚡</div>
+                <div class="pay-option-info">
+                  <div class="pay-option-name">Express</div>
+                  <div class="pay-option-sub">2–3 days · Free over ₹5K</div>
                 </div>
-                <div class="pn-pay-opt" style="flex:1;">
-                  <i class="ti ti-truck" aria-hidden="true"></i><span><strong style="font-weight:500;">Standard</strong><br><span style="font-size:11px; color:var(--color-text-secondary);">5–7 days · Free</span></span>
-                  <div class="pn-radio"></div>
+                <div class="pay-radio"></div>
+              </div>
+              <div class="pay-option" onclick="this.classList.add('selected'); this.previousElementSibling.classList.remove('selected')">
+                <div class="pay-option-icon">🚚</div>
+                <div class="pay-option-info">
+                  <div class="pay-option-name">Standard</div>
+                  <div class="pay-option-sub">5–7 days · Always free</div>
                 </div>
+                <div class="pay-radio"></div>
               </div>
-            </div>
-            <div class="pn-form-actions">
-              <button class="pn-back-btn" onclick="showPage('cart',null)">← Back</button>
-              <button class="pn-next-btn" onclick="goToPayment()">Continue to payment →</button>
             </div>
           </div>
-        </div>
-
-        <!-- Step 3: Payment -->
-        <div id="stepPayment" style="display:none;">
-          <div class="pn-form-card">
-            <div class="pn-form-title"><i class="ti ti-credit-card" aria-hidden="true" style="font-size:16px; vertical-align:-2px; margin-right:6px;"></i>Payment method</div>
-            <div class="pn-pay-opts">
-              <div class="pn-pay-opt sel"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Credit / Debit card</span><div class="pn-radio"></div></div>
-              <div class="pn-pay-opt"><i class="ti ti-brand-google-pay" aria-hidden="true"></i><span>UPI / Google Pay</span><div class="pn-radio"></div></div>
-              <div class="pn-pay-opt"><i class="ti ti-building-bank" aria-hidden="true"></i><span>Net banking</span><div class="pn-radio"></div></div>
-              <div class="pn-pay-opt"><i class="ti ti-wallet" aria-hidden="true"></i><span>PixelNest Wallet (₹2,400 available)</span><div class="pn-radio"></div></div>
-            </div>
-            <div class="pn-form-grid" style="margin-top:14px;">
-              <div class="pn-form-full">
-                <label class="pn-label">Card number</label>
-                <input class="pn-field" placeholder="4242 4242 4242 4242" />
-              </div>
-              <div>
-                <label class="pn-label">Expiry</label>
-                <input class="pn-field" placeholder="MM / YY" />
-              </div>
-              <div>
-                <label class="pn-label">CVV</label>
-                <input class="pn-field" placeholder="···" />
-              </div>
-              <div class="pn-form-full">
-                <label class="pn-label">Name on card</label>
-                <input class="pn-field" placeholder="Arjun Sharma" />
-              </div>
-            </div>
-            <div class="pn-form-actions">
-              <button class="pn-back-btn" onclick="goToShipping()">← Back</button>
-              <button class="pn-next-btn" onclick="goToReview()">Review order →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 4: Review -->
-        <div id="stepReview" style="display:none;">
-          <div class="pn-form-card">
-            <div class="pn-form-title"><i class="ti ti-clipboard-check" aria-hidden="true" style="font-size:16px; vertical-align:-2px; margin-right:6px;"></i>Review your order</div>
-            <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding:12px 14px; margin-bottom:14px;">
-              <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px; font-weight:500;">Shipping to</div>
-              <div style="font-size:13px; color:var(--color-text-primary);">Arjun Sharma · 12, MG Road, Mumbai 400001</div>
-              <div style="font-size:12px; color:var(--color-text-secondary); margin-top:2px;">+91 98765 43210 · Express 2-3 days</div>
-            </div>
-            <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding:12px 14px; margin-bottom:14px;">
-              <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px; font-weight:500;">Payment</div>
-              <div style="font-size:13px; color:var(--color-text-primary); display:flex; align-items:center; gap:8px;"><i class="ti ti-credit-card" aria-hidden="true"></i>Visa ending in 4242</div>
-            </div>
-            <div id="reviewItems" style="margin-bottom:14px;"></div>
-            <div class="pn-form-actions" style="border-top: 0.5px solid var(--color-border-tertiary); padding-top:16px; margin-top:4px;">
-              <button class="pn-back-btn" onclick="goToPayment()">← Back</button>
-              <button class="pn-next-btn" style="background:#0F6E56; padding:0 24px; height:40px;" onclick="placeOrder()"><i class="ti ti-check" style="font-size:15px;" aria-hidden="true"></i> Place order · ₹1,23,306</button>
-            </div>
+          <div class="form-btn-row">
+            <button class="btn-back" onclick="showPage('home')">← Back to shop</button>
+            <button class="btn-next" onclick="chkGoPayment()">Continue to payment →</button>
           </div>
         </div>
       </div>
 
-      <!-- Summary sidebar -->
-      <div class="pn-summary" style="top:112px;">
-        <div class="pn-summary-title">Order summary</div>
-        <div id="checkoutSummaryItems"></div>
-        <div style="border-top:0.5px solid var(--color-border-tertiary); margin:10px 0 8px;"></div>
-        <div class="pn-summary-row"><span>Subtotal</span><span>₹1,04,497</span></div>
-        <div class="pn-summary-row"><span>Shipping</span><span style="color:#0F6E56;">Free</span></div>
-        <div class="pn-summary-row"><span>Tax (18% GST)</span><span>₹18,809</span></div>
-        <div class="pn-summary-row total"><span>Total</span><span>₹1,23,306</span></div>
-        <p style="text-align:center; font-size:11px; color:var(--color-text-tertiary); margin-top:12px; display:flex; align-items:center; justify-content:center; gap:4px;"><i class="ti ti-shield-check" aria-hidden="true" style="font-size:14px;"></i>Protected by PixelNest Guarantee</p>
+      <!-- Step 3: Payment -->
+      <div id="chkPayment" style="display:none;">
+        <div class="form-card">
+          <div class="form-card-title">💳 Payment method</div>
+          <div class="pay-option selected" id="po1" onclick="selectPay(this)">
+            <div class="pay-option-icon">💳</div>
+            <div class="pay-option-info">
+              <div class="pay-option-name">Credit / Debit card</div>
+              <div class="pay-option-sub">Visa, Mastercard, Rupay</div>
+            </div>
+            <div class="pay-radio"></div>
+          </div>
+          <div class="pay-option" id="po2" onclick="selectPay(this)">
+            <div class="pay-option-icon">📱</div>
+            <div class="pay-option-info">
+              <div class="pay-option-name">UPI</div>
+              <div class="pay-option-sub">Google Pay, PhonePe, Paytm</div>
+            </div>
+            <div class="pay-radio"></div>
+          </div>
+          <div class="pay-option" id="po3" onclick="selectPay(this)">
+            <div class="pay-option-icon">🏦</div>
+            <div class="pay-option-info">
+              <div class="pay-option-name">Net banking</div>
+              <div class="pay-option-sub">All major banks</div>
+            </div>
+            <div class="pay-radio"></div>
+          </div>
+          <div class="pay-option" id="po4" onclick="selectPay(this)">
+            <div class="pay-option-icon">🎁</div>
+            <div class="pay-option-info">
+              <div class="pay-option-name">PixelNest Wallet</div>
+              <div class="pay-option-sub">Balance: ₹2,400</div>
+            </div>
+            <div class="pay-radio"></div>
+          </div>
+          <div class="form-grid" style="margin-top:20px;" id="cardFields">
+            <div class="form-full">
+              <label class="form-label">Card number</label>
+              <input class="form-input" placeholder="4242 4242 4242 4242" />
+            </div>
+            <div>
+              <label class="form-label">Expiry</label>
+              <input class="form-input" placeholder="MM / YY" />
+            </div>
+            <div>
+              <label class="form-label">CVV</label>
+              <input class="form-input" placeholder="•••" />
+            </div>
+            <div class="form-full">
+              <label class="form-label">Name on card</label>
+              <input class="form-input" placeholder="Arjun Sharma" />
+            </div>
+          </div>
+          <div class="form-btn-row">
+            <button class="btn-back" onclick="chkGoShipping()">← Back</button>
+            <button class="btn-next" onclick="chkGoReview()">Review order →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Review -->
+      <div id="chkReview" style="display:none;">
+        <div class="form-card">
+          <div class="form-card-title">✅ Review your order</div>
+          <div style="background:var(--surface); border-radius:10px; padding:16px; margin-bottom:14px;">
+            <div style="font-size:12px; font-weight:700; color:var(--ink3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Shipping to</div>
+            <div style="font-size:14px; color:var(--ink); font-weight:600;">Arjun Sharma</div>
+            <div style="font-size:13px; color:var(--ink2);">12, MG Road, Bandra West, Mumbai 400001</div>
+            <div style="font-size:13px; color:var(--ink2);">Express delivery · Free</div>
+          </div>
+          <div style="background:var(--surface); border-radius:10px; padding:16px; margin-bottom:20px;">
+            <div style="font-size:12px; font-weight:700; color:var(--ink3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Payment</div>
+            <div style="font-size:14px; color:var(--ink);">💳 Visa ending in 4242</div>
+          </div>
+          <div id="reviewCartItems"></div>
+          <div class="form-btn-row" style="border-top:1px solid var(--border2); padding-top:20px; margin-top:8px;">
+            <button class="btn-back" onclick="chkGoPayment()">← Back</button>
+            <button class="btn-next" style="background:var(--teal); padding:0 32px; font-size:15px;" onclick="placeOrder()">🎉 Place order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary sidebar -->
+    <div class="chk-summary">
+      <div class="chk-summary-title">Order summary</div>
+      <div id="chkSidebarItems"></div>
+      <div class="chk-divider"></div>
+      <div class="chk-row"><span>Subtotal</span><span id="chkSubtotal">₹0</span></div>
+      <div class="chk-row"><span>Shipping</span><span style="color:var(--teal);">Free</span></div>
+      <div class="chk-row"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
+      <div class="chk-row total"><span>Total</span><span id="chkTotal">₹0</span></div>
+      <div style="margin-top:14px; background:var(--surface); border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:8px;">
+        <input style="flex:1; height:32px; border:1px solid var(--border); border-radius:6px; padding:0 10px; font-size:12px; background:#fff; outline:none; font-family:inherit;" placeholder="Promo code (PIXEL20)" />
+        <button style="height:32px; padding:0 12px; border:1px solid var(--border); border-radius:6px; background:none; font-size:12px; cursor:pointer; font-family:inherit;" onclick="showToast('✅','Code applied! 20% discount added.')">Apply</button>
+      </div>
+      <div style="font-size:11px; color:var(--ink3); text-align:center; margin-top:14px; display:flex; align-items:center; justify-content:center; gap:4px;">🔒 256-bit SSL encrypted checkout</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <div style="width:28px;height:28px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">📷</div>
+        PixelNest
+      </div>
+      <div class="footer-desc">India's premium destination for camera gear, lenses, and photography accessories. Trusted by 50,000+ photographers since 2018.</div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;">📸</div>
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;">🐦</div>
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;">▶️</div>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a class="footer-link" onclick="filterCat('Cameras');showPage('home')">Cameras</a>
+      <a class="footer-link" onclick="filterCat('Lenses');showPage('home')">Lenses</a>
+      <a class="footer-link" onclick="filterCat('Lighting');showPage('home')">Lighting</a>
+      <a class="footer-link" onclick="filterCat('Bags');showPage('home')">Bags & Cases</a>
+      <a class="footer-link" onclick="filterCat('Accessories');showPage('home')">Accessories</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Support</div>
+      <a class="footer-link">Track order</a>
+      <a class="footer-link">Returns & refunds</a>
+      <a class="footer-link">Warranty</a>
+      <a class="footer-link">Service centres</a>
+      <a class="footer-link">Contact us</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a class="footer-link">About PixelNest</a>
+      <a class="footer-link">Careers</a>
+      <a class="footer-link">Press</a>
+      <a class="footer-link">Privacy policy</a>
+      <a class="footer-link">Terms of service</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 PixelNest Technologies Pvt. Ltd. · All rights reserved · Made with ❤️ for photographers
+  </div>
+</footer>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <div class="cart-header-title">Your cart <span id="cartItemCount" style="font-weight:400;font-size:14px;color:var(--ink3);"></span></div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItemsEl"></div>
+  <div class="cart-footer" id="cartFooter"></div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal">
+    <div class="modal-gallery">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-gallery-icon" id="modalIcon"></div>
+    </div>
+    <div class="modal-info">
+      <div class="modal-brand" id="modalBrand"></div>
+      <div class="modal-name" id="modalName"></div>
+      <div class="modal-rating">
+        <div class="modal-stars">★★★★★</div>
+        <div class="modal-rating-count" id="modalRating"></div>
+      </div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-specs" id="modalSpecs"></div>
+      <div class="modal-price-row">
+        <div class="modal-price" id="modalPrice"></div>
+        <div class="modal-price-was" id="modalPriceWas"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-add-btn" id="modalAddBtn">Add to cart</button>
+        <button class="modal-wish-btn">❤️</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="pn-toast" id="toast"></div>
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
 
 <script>
+// ═══════════════════ DATA ═══════════════════
 const products = [
-  { name: "Sony Alpha 7 IV", sub: "Full-frame mirrorless", price: "₹2,42,990", icon: "ti-camera", badge: "Best seller" },
-  { name: "Canon EF 50mm f/1.4", sub: "Prime lens", price: "₹24,999", icon: "ti-aperture", badge: "Sale" },
-  { name: "Fujifilm X-T5", sub: "APS-C mirrorless", price: "₹1,54,999", icon: "ti-camera", badge: null },
-  { name: "Godox SL-60W LED", sub: "Studio light", price: "₹12,499", icon: "ti-bulb", badge: "New" },
-  { name: "Peak Design Everyday", sub: "Camera bag 20L", price: "₹17,990", icon: "ti-backpack", badge: null },
-  { name: "Manfrotto MT055", sub: "Carbon tripod", price: "₹32,500", icon: "ti-arrows-up-down", badge: null },
-];
-const newProducts = [
-  { name: "Nikon Z9 Body", sub: "Pro mirrorless", price: "₹5,04,995", icon: "ti-camera", badge: "New" },
-  { name: "Sony FE 85mm f/1.4", sub: "Portrait GM lens", price: "₹1,44,990", icon: "ti-aperture", badge: "New" },
-  { name: "DJI Osmo Pocket 3", sub: "Pocket gimbal cam", price: "₹42,999", icon: "ti-device-camera", badge: "New" },
-  { name: "Lowepro ProTrekker", sub: "Hiking camera pack", price: "₹21,990", icon: "ti-backpack", badge: "New" },
-];
-const cartData = [
-  { name: "Sony Alpha 7 IV Body", variant: "Black · 1x battery", price: "₹2,42,990", icon: "ti-camera", qty: 1 },
-  { name: "Canon EF 50mm f/1.4", variant: "Universal mount", price: "₹24,999", icon: "ti-aperture", qty: 2 },
-  { name: "Peak Design Bag 20L", variant: "Ash grey", price: "₹17,990", icon: "ti-backpack", qty: 1 },
+  {id:1,name:'Sony Alpha 7 IV',brand:'Sony',spec:'33MP · Full-frame mirrorless',price:'₹2,42,990',priceOld:'₹2,79,990',icon:'📷',badge:'Best seller',badgeType:'badge-best',cat:'Cameras',rating:'4.9 (2,841)',desc:'33MP full-frame BSI CMOS Exmor R sensor. 4K 60p video. Real-time tracking AF. Up to 10fps. The ultimate hybrid camera for stills and video.',specs:[{k:'Sensor',v:'33MP BSI CMOS'},{k:'Video',v:'4K 60p'},{k:'AF Points',v:'759 phase-detect'},{k:'Battery',v:'580 shots/charge'}]},
+  {id:2,name:'Canon EF 50mm f/1.4',brand:'Canon',spec:'Prime lens · EF mount',price:'₹24,999',priceOld:'₹32,000',icon:'🔭',badge:'Sale',badgeType:'badge-sale',cat:'Lenses',rating:'4.8 (1,204)',desc:'A legendary 50mm prime with silky f/1.4 bokeh. Ring-type USM for fast, near-silent AF. Ideal for portraits, street photography, and low-light work.',specs:[{k:'Focal length',v:'50mm'},{k:'Aperture',v:'f/1.4 – f/22'},{k:'Mount',v:'Canon EF'},{k:'Weight',v:'290g'}]},
+  {id:3,name:'Godox SL-60W LED',brand:'Godox',spec:'Continuous LED · 5600K',price:'₹12,499',priceOld:null,icon:'💡',badge:'Hot',badgeType:'badge-hot',cat:'Lighting',rating:'4.7 (876)',desc:'60W daylight-balanced LED panel. Bowens mount compatible. CRI 95+ for accurate colour rendering. Silent fan cooling. Perfect for studio and YouTube setups.',specs:[{k:'Power',v:'60W'},{k:'Colour temp',v:'5600K'},{k:'CRI',v:'95+'},{k:'Mount',v:'Bowens'}]},
+  {id:4,name:'Peak Design Everyday V2',brand:'Peak Design',spec:'20L camera backpack',price:'₹17,990',priceOld:'₹22,000',icon:'🎒',badge:'New',badgeType:'badge-new',cat:'Bags',rating:'4.9 (643)',desc:'Reimagined FlexFold dividers. TSA-friendly laptop access. Weatherproof 400D nylon shell. Fits mirrorless body, 4 lenses, and a 15" MacBook.',specs:[{k:'Capacity',v:'20L'},{k:'Laptop',v:'Up to 15"'},{k:'Material',v:'400D nylon'},{k:'Weight',v:'1.43kg'}]},
+  {id:5,name:'Fujifilm X-T5',brand:'Fujifilm',spec:'40MP · APS-C mirrorless',price:'₹1,54,999',priceOld:'₹1,74,999',icon:'📷',badge:'Best seller',badgeType:'badge-best',cat:'Cameras',rating:'4.9 (1,120)',desc:'40.2MP BSI sensor in a compact body. In-body 7-stop stabilisation. Film simulations. 6.2K video. The photographer\'s camera — no compromises.',specs:[{k:'Sensor',v:'40.2MP APS-C'},{k:'IBIS',v:'7-stop'},{k:'Video',v:'6.2K 30p'},{k:'Weight',v:'557g'}]},
+  {id:6,name:'Manfrotto MT055CXPRO4',brand:'Manfrotto',spec:'Carbon fibre tripod',price:'₹32,500',priceOld:'₹38,000',icon:'🦯',badge:null,badgeType:null,cat:'Tripods',rating:'4.8 (432)',desc:'Professional carbon fibre tripod with 90° centre column rotation. Max load 9kg. Fast column lock. Folds to 60cm for travel. Built for the long haul.',specs:[{k:'Max height',v:'170cm'},{k:'Max load',v:'9kg'},{k:'Weight',v:'1.9kg'},{k:'Material',v:'Carbon fibre'}]},
+  {id:7,name:'Nikon Z9 Body',brand:'Nikon',spec:'45.7MP · Flagship mirrorless',price:'₹5,04,995',priceOld:'₹5,59,995',icon:'📷',badge:'New',badgeType:'badge-new',cat:'Cameras',rating:'5.0 (388)',desc:'45.7MP stacked BSI CMOS. 20fps RAW, 120fps JPEG. 8K RAW video. No mechanical shutter. AI subject detection. Nikon\'s ultimate professional body.',specs:[{k:'Sensor',v:'45.7MP stacked'},{k:'Speed',v:'120fps'},{k:'Video',v:'8K RAW'},{k:'Battery',v:'740 shots/charge'}]},
+  {id:8,name:'Sony FE 85mm f/1.4 GM',brand:'Sony',spec:'Portrait GM lens · E-mount',price:'₹1,44,990',priceOld:'₹1,59,990',icon:'🔭',badge:'Best seller',badgeType:'badge-best',cat:'Lenses',rating:'4.9 (965)',desc:'G Master rendering with 11-blade circular aperture. XD linear motor for silent, fast AF. Perfect circular bokeh. The definitive portrait lens for Sony E-mount.',specs:[{k:'Focal length',v:'85mm'},{k:'Aperture',v:'f/1.4 – f/22'},{k:'AF motor',v:'XD Linear'},{k:'Weight',v:'820g'}]},
+  {id:9,name:'Lowepro ProTrekker BP',brand:'Lowepro',spec:'45L trekking camera bag',price:'₹21,990',priceOld:null,icon:'🎒',badge:'New',badgeType:'badge-new',cat:'Bags',rating:'4.7 (312)',desc:'Designed for trail and studio alike. Bottom loading camera compartment. AW all-weather cover included. Fits drone, 2 bodies, 6 lenses, and a 17" laptop.',specs:[{k:'Capacity',v:'45L'},{k:'Laptop',v:'Up to 17"'},{k:'Weather',v:'AW covered'},{k:'Frame',v:'Padded back'}]},
+  {id:10,name:'Profoto A10 AirTTL',brand:'Profoto',spec:'Studio flash · TTL + HSS',price:'₹64,990',priceOld:'₹72,000',icon:'💡',badge:'Sale',badgeType:'badge-sale',cat:'Lighting',rating:'4.8 (218)',desc:'The world\'s most advanced on-camera flash. AirTTL for full remote control. HSS up to 1/8000s. Magnetic mount for instant modifier attachment.',specs:[{k:'Power',v:'76Ws'},{k:'Recycle',v:'1.2s at full'},{k:'HSS',v:'Up to 1/8000s'},{k:'Battery',v:'450 flashes'}]},
+  {id:11,name:'Rode VideoMic Pro+',brand:'Rode',spec:'Directional camera mic',price:'₹18,990',priceOld:'₹22,000',icon:'🎛',badge:'Sale',badgeType:'badge-sale',cat:'Accessories',rating:'4.8 (1,450)',desc:'Broadcast-quality shotgun mic. High-pass filter, pad, and gain controls. Safety channel recording at -20dB. Built-in lithium battery. Plug and play.',specs:[{k:'Pattern',v:'Supercardioid'},{k:'Freq resp',v:'20Hz–20kHz'},{k:'Battery',v:'Internal Li'},{k:'Weight',v:'122g'}]},
+  {id:12,name:'Fujifilm Superia X-TRA',brand:'Fujifilm',spec:'35mm film · ISO 400',price:'₹1,290',priceOld:null,icon:'🎞',badge:null,badgeType:null,cat:'Film',rating:'4.6 (2,100)',desc:'Fine grain, vivid colour reproduction. Ideal for everyday shooting in varied lighting. 36 exposures. The gold standard for colour negative film.',specs:[{k:'Format',v:'35mm'},{k:'ISO',v:'400'},{k:'Exposures',v:'36'},{k:'Process',v:'C-41'}]},
 ];
 
-function renderGrid(id, data) {
-  const g = document.getElementById(id);
-  g.innerHTML = data.map((p, i) => `
-    <div class="pn-product" onclick="addToCart('${p.name}')">
-      <div class="pn-product-img">
-        <i class="ti ${p.icon}" aria-hidden="true"></i>
-        ${p.badge ? `<div class="pn-product-badge">${p.badge}</div>` : ''}
+const newArrivals = products.filter(p=>p.badge==='New');
+const reviews = [
+  {name:'Priya Mehta',avatar:'#534AB7',init:'PM',stars:'★★★★★',text:'Ordered the Sony A7 IV and it arrived in perfect condition, well-packed with all accessories. Image quality is insane. PixelNest\'s customer support helped me choose the right lens. Will definitely order again.',product:'Sony Alpha 7 IV',verified:true},
+  {name:'Rohan Iyer',avatar:'#0f6e56',init:'RI',stars:'★★★★★',text:'The Fujifilm X-T5 I bought here is genuine and at a better price than most local dealers. Delivery was in 2 days. The unboxing experience was also premium — came with a nice thank-you card.',product:'Fujifilm X-T5',verified:true},
+  {name:'Aditi Singh',avatar:'#d85a30',init:'AS',stars:'★★★★☆',text:'Great experience overall. The Peak Design bag is absolutely worth the price. Only reason not 5 stars is shipping took 3 days instead of 2. But the product and packaging were flawless.',product:'Peak Design Everyday V2',verified:true},
+  {name:'Kabir Nair',avatar:'#993C1D',init:'KN',stars:'★★★★★',text:'Bought the Godox SL-60W for my YouTube channel. Setup was a breeze. The CRI is amazing — skin tones look natural. PixelNest threw in a free softbox as part of a bundle. Highly recommend.',product:'Godox SL-60W LED',verified:true},
+  {name:'Meera Patel',avatar:'#BA7517',init:'MP',stars:'★★★★★',text:'Used the EMI option for the Nikon Z9 and the process was seamless. The camera is a beast. I\'ve been to other camera stores and PixelNest has the widest genuine stock. Never going elsewhere.',product:'Nikon Z9 Body',verified:true},
+  {name:'Dev Kapoor',avatar:'#3c3489',init:'DK',stars:'★★★★★',text:'Super impressed with the 30-day return policy. I tried the 85mm GM and it was beyond expectations, so I kept it. The product is authentic, price-matched, and delivery was fast. 10/10.',product:'Sony FE 85mm f/1.4 GM',verified:true},
+];
+
+// ═══════════════════ STATE ═══════════════════
+let cart = [];
+let currentFilter = 'All';
+
+// ═══════════════════ INIT ═══════════════════
+function init() {
+  renderProducts();
+  renderNewArrivals();
+  renderReviews();
+  startTimer();
+  document.addEventListener('click', e => {
+    if (!document.querySelector('.nav-search').contains(e.target))
+      document.getElementById('searchDropdown').classList.remove('open');
+  });
+}
+
+// ═══════════════════ PAGES ═══════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'checkout') renderCheckout();
+}
+
+function setActive(btn) {
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ═══════════════════ PRODUCTS ═══════════════════
+function renderProducts() {
+  const filtered = currentFilter === 'All' ? products : products.filter(p => p.cat === currentFilter);
+  document.getElementById('productGrid').innerHTML = filtered.map(p => productCardHTML(p)).join('');
+}
+function renderNewArrivals() {
+  document.getElementById('newArrivalsGrid').innerHTML = newArrivals.map(p => productCardHTML(p)).join('');
+}
+function productCardHTML(p) {
+  return `<div class="product-card" onclick="openModal(products.find(x=>x.id===${p.id}))">
+    <div class="product-img">
+      <span class="product-img-icon">${p.icon}</span>
+      ${p.badge ? `<span class="product-badge ${p.badgeType}">${p.badge}</span>` : ''}
+      <div class="product-wishlist" onclick="event.stopPropagation();this.classList.toggle('liked');this.textContent=this.classList.contains('liked')?'❤️':'🤍';showToast('❤️','Added to wishlist')">🤍</div>
+    </div>
+    <div class="product-info">
+      <div class="product-brand">${p.brand}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-spec">${p.spec}</div>
+      <div class="product-stars">
+        <span class="stars">★★★★★</span>
+        <span class="star-count">${p.rating}</span>
       </div>
-      <div class="pn-product-info">
-        <div class="pn-stars">${'<i class="ti ti-star-filled" aria-hidden="true"></i>'.repeat(4)}<i class="ti ti-star-half-filled" aria-hidden="true"></i></div>
-        <div class="pn-product-name">${p.name}</div>
-        <div class="pn-product-sub">${p.sub}</div>
-        <div class="pn-product-row">
-          <div class="pn-product-price">${p.price}</div>
-          <button class="pn-add-btn" aria-label="Add ${p.name} to cart"><i class="ti ti-plus" aria-hidden="true"></i></button>
+      <div class="product-bottom">
+        <div>
+          <span class="product-price">${p.price}</span>
+          ${p.priceOld ? `<span class="product-price-old">${p.priceOld}</span>` : ''}
         </div>
+        <button class="add-btn" onclick="event.stopPropagation();addToCartDirect('${p.name}','${p.icon}','${p.price}')" aria-label="Add to cart">+</button>
       </div>
+    </div>
+  </div>`;
+}
+
+function filterCat(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('on'));
+  renderProducts();
+  document.getElementById('best-sellers').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════ REVIEWS ═══════════════════
+function renderReviews() {
+  document.getElementById('reviewsGrid').innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="review-top">
+        <div class="review-avatar" style="background:${r.avatar}">${r.init}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-meta">Verified buyer · 2 weeks ago</div>
+        </div>
+        ${r.verified ? '<span class="review-verified">✓ Verified</span>' : ''}
+      </div>
+      <div class="review-stars">${r.stars}</div>
+      <div class="review-text">${r.text}</div>
+      <div class="review-product">📷 ${r.product}</div>
     </div>`).join('');
 }
 
-function renderCart() {
-  const el = document.getElementById('cartItems');
-  el.innerHTML = cartData.map((c, i) => `
-    <div class="pn-cart-item">
-      <div class="pn-cart-thumb"><i class="ti ${c.icon}" aria-hidden="true"></i></div>
-      <div class="pn-cart-details">
-        <div class="pn-cart-name">${c.name}</div>
-        <div class="pn-cart-variant">${c.variant}</div>
-        <div class="pn-qty">
-          <div class="pn-qty-btn" onclick="changeQty(${i},-1)"><i class="ti ti-minus" style="font-size:12px;" aria-hidden="true"></i></div>
-          <div class="pn-qty-val" id="qty${i}">${c.qty}</div>
-          <div class="pn-qty-btn" onclick="changeQty(${i},1)"><i class="ti ti-plus" style="font-size:12px;" aria-hidden="true"></i></div>
-        </div>
-        <button class="pn-cart-remove" onclick="removeFromCart(${i})">Remove</button>
-      </div>
-      <div class="pn-cart-price">${c.price}</div>
-    </div>`).join('');
-  document.getElementById('cartCount').textContent = `(${cartData.length} items)`;
+// ═══════════════════ CART ═══════════════════
+function addToCartDirect(name, icon, price) {
+  const existing = cart.find(i => i.name === name);
+  if (existing) existing.qty++;
+  else cart.push({name, icon, price, qty:1});
+  updateCartCount();
+  showToast('🛒', `${name} added to cart`);
 }
 
-function renderCheckoutSummary() {
-  const el = document.getElementById('checkoutSummaryItems');
-  const ri = document.getElementById('reviewItems');
-  const html = cartData.map(c => `
-    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-      <div style="width:32px;height:32px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--color-text-secondary);flex-shrink:0;"><i class="ti ${c.icon}" aria-hidden="true"></i></div>
-      <div style="flex:1;"><div style="font-size:12px;color:var(--color-text-primary);font-weight:500;">${c.name}</div><div style="font-size:11px;color:var(--color-text-secondary);">${c.variant}</div></div>
-      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">${c.price}</div>
+function openCart() {
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartSidebar').classList.add('open');
+  renderCartSidebar();
+}
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartSidebar').classList.remove('open');
+}
+function updateCartCount() {
+  const total = cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartCount').textContent = total;
+}
+
+function renderCartSidebar() {
+  const el = document.getElementById('cartItemsEl');
+  const footer = document.getElementById('cartFooter');
+  document.getElementById('cartItemCount').textContent = cart.length ? `(${cart.length} item${cart.length>1?'s':''})` : '';
+
+  if (!cart.length) {
+    el.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div style="font-size:16px;font-weight:600;color:var(--ink);">Your cart is empty</div><div style="font-size:13px;">Add something to get started</div><button class="btn-primary" style="margin-top:16px;" onclick="closeCart();showPage('home')">Shop now →</button></div>`;
+    footer.innerHTML = '';
+    return;
+  }
+
+  el.innerHTML = cart.map((item, i) => `
+    <div class="cart-item">
+      <div class="cart-item-thumb">${item.icon}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-variant">Standard · Genuine</div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+          <div class="qty-val">${item.qty}</div>
+          <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${i})">Remove</button>
+      </div>
+      <div class="cart-item-price">${item.price}</div>
     </div>`).join('');
-  if (el) el.innerHTML = html;
-  if (ri) ri.innerHTML = html;
+
+  const subtotal = getSubtotal();
+  footer.innerHTML = `
+    <div class="cart-summary-row"><span>Subtotal</span><span>${fmtPrice(subtotal)}</span></div>
+    <div class="cart-summary-row"><span>Shipping</span><span style="color:var(--teal);">Free</span></div>
+    <div class="cart-summary-row big"><span>Total (incl. GST)</span><span>${fmtPrice(Math.round(subtotal*1.18))}</span></div>
+    <button class="cart-checkout-btn" onclick="closeCart();showPage('checkout')">🔒 Checkout · ${fmtPrice(Math.round(subtotal*1.18))}</button>
+    <div style="font-size:11px;color:var(--ink3);text-align:center;margin-top:10px;">You can enter promo codes at checkout</div>`;
 }
 
 function changeQty(i, d) {
-  cartData[i].qty = Math.max(1, cartData[i].qty + d);
-  document.getElementById('qty' + i).textContent = cartData[i].qty;
+  cart[i].qty = Math.max(1, cart[i].qty + d);
+  updateCartCount();
+  renderCartSidebar();
 }
-
 function removeFromCart(i) {
-  cartData.splice(i, 1);
-  renderCart();
-  showToast('Item removed');
-  document.getElementById('cartBadge').textContent = cartData.length;
+  const name = cart[i].name;
+  cart.splice(i,1);
+  updateCartCount();
+  renderCartSidebar();
+  showToast('🗑', `${name} removed`);
 }
 
-function addToCart(name) {
-  document.getElementById('cartBadge').textContent = parseInt(document.getElementById('cartBadge').textContent) + 1;
-  showToast('Added to cart: ' + name);
+function getSubtotal() {
+  return cart.reduce((sum, item) => {
+    const num = parseInt(item.price.replace(/[₹,]/g,''));
+    return sum + num * item.qty;
+  }, 0);
+}
+function fmtPrice(n) {
+  return '₹' + n.toLocaleString('en-IN');
 }
 
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.innerHTML = '<i class="ti ti-check" aria-hidden="true" style="font-size:15px;"></i>' + msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+// ═══════════════════ MODAL ═══════════════════
+function openModal(p) {
+  if (!p) return;
+  document.getElementById('modalIcon').textContent = p.icon;
+  document.getElementById('modalBrand').textContent = p.brand;
+  document.getElementById('modalName').textContent = p.name;
+  document.getElementById('modalRating').textContent = p.rating + ' reviews';
+  document.getElementById('modalDesc').textContent = p.desc;
+  document.getElementById('modalPrice').textContent = p.price;
+  document.getElementById('modalPriceWas').textContent = p.priceOld || '';
+  document.getElementById('modalSpecs').innerHTML = p.specs.map(s=>`
+    <div class="modal-spec">
+      <div class="modal-spec-key">${s.k}</div>
+      <div class="modal-spec-val">${s.v}</div>
+    </div>`).join('');
+  document.getElementById('modalAddBtn').onclick = () => {
+    addToCartDirect(p.name, p.icon, p.price);
+    closeModal();
+  };
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
 }
 
-function showPage(id, btn) {
-  document.querySelectorAll('.pn-page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  document.querySelectorAll('.pn-nav-link').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  if (id === 'cart') renderCart();
-  if (id === 'checkout') renderCheckoutSummary();
+// ═══════════════════ CHECKOUT ═══════════════════
+function renderCheckout() {
+  const subtotal = getSubtotal();
+  const gst = Math.round(subtotal * 0.18);
+  const total = subtotal + gst;
+  document.getElementById('chkSubtotal').textContent = fmtPrice(subtotal);
+  document.getElementById('chkGst').textContent = fmtPrice(gst);
+  document.getElementById('chkTotal').textContent = fmtPrice(total);
+
+  const sideEl = document.getElementById('chkSidebarItems');
+  if (!cart.length) {
+    sideEl.innerHTML = '<div style="font-size:13px;color:var(--ink3);text-align:center;padding:16px 0;">Cart is empty</div>';
+    return;
+  }
+  sideEl.innerHTML = cart.map(i=>`
+    <div class="chk-summary-item">
+      <div class="chk-item-thumb">${i.icon}</div>
+      <div>
+        <div class="chk-item-name">${i.name}</div>
+        <div class="chk-item-sub">Qty: ${i.qty}</div>
+      </div>
+      <div class="chk-item-price">${i.price}</div>
+    </div>`).join('');
+
+  document.getElementById('reviewCartItems').innerHTML = cart.map(i=>`
+    <div class="chk-summary-item" style="border:1px solid var(--border2);border-radius:8px;padding:12px;margin-bottom:8px;">
+      <div class="chk-item-thumb">${i.icon}</div>
+      <div style="flex:1;">
+        <div class="chk-item-name">${i.name}</div>
+        <div class="chk-item-sub">Qty: ${i.qty}</div>
+      </div>
+      <div class="chk-item-price">${i.price}</div>
+    </div>`).join('');
 }
 
-function goToPayment() {
-  document.getElementById('stepShipping').style.display = 'none';
-  document.getElementById('stepPayment').style.display = 'block';
-  document.getElementById('s2').className = 'pn-step-num done';
-  document.getElementById('s2').innerHTML = '<i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i>';
-  document.getElementById('s3').className = 'pn-step-num cur';
-  document.getElementById('sl3').className = 'pn-step-label cur';
+function chkGoPayment() {
+  document.getElementById('chkShipping').style.display='none';
+  document.getElementById('chkPayment').style.display='block';
+  document.getElementById('cs2').classList.remove('active'); document.getElementById('cs2').classList.add('done'); document.getElementById('cs2').textContent='✓';
+  document.getElementById('csl2').classList.remove('active');
+  document.getElementById('cs3').classList.add('active');
+  document.getElementById('csl3').classList.add('active');
+  window.scrollTo(0,0);
 }
-function goToShipping() {
-  document.getElementById('stepPayment').style.display = 'none';
-  document.getElementById('stepShipping').style.display = 'block';
-  document.getElementById('s2').className = 'pn-step-num cur';
-  document.getElementById('s2').textContent = '2';
-  document.getElementById('s3').className = 'pn-step-num';
-  document.getElementById('sl3').className = 'pn-step-label';
+function chkGoShipping() {
+  document.getElementById('chkPayment').style.display='none';
+  document.getElementById('chkShipping').style.display='block';
+  document.getElementById('cs2').classList.remove('done'); document.getElementById('cs2').classList.add('active'); document.getElementById('cs2').textContent='2';
+  document.getElementById('csl2').classList.add('active');
+  document.getElementById('cs3').classList.remove('active');
+  document.getElementById('csl3').classList.remove('active');
+  window.scrollTo(0,0);
 }
-function goToReview() {
-  document.getElementById('stepPayment').style.display = 'none';
-  document.getElementById('stepReview').style.display = 'block';
-  document.getElementById('s3').className = 'pn-step-num done';
-  document.getElementById('s3').innerHTML = '<i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i>';
-  document.getElementById('s4').className = 'pn-step-num cur';
-  document.getElementById('sl4').className = 'pn-step-label cur';
-  renderCheckoutSummary();
+function chkGoReview() {
+  renderCheckout();
+  document.getElementById('chkPayment').style.display='none';
+  document.getElementById('chkReview').style.display='block';
+  document.getElementById('cs3').classList.remove('active'); document.getElementById('cs3').classList.add('done'); document.getElementById('cs3').textContent='✓';
+  document.getElementById('csl3').classList.remove('active');
+  document.getElementById('cs4').classList.add('active');
+  document.getElementById('csl4').classList.add('active');
+  window.scrollTo(0,0);
+}
+function selectPay(el) {
+  document.querySelectorAll('.pay-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
 }
 function placeOrder() {
-  showPage('home', null);
-  showToast('🎉 Order placed! You\'ll receive a confirmation shortly.');
+  cart = [];
+  updateCartCount();
+  // Reset checkout
+  document.getElementById('chkShipping').style.display='block';
+  document.getElementById('chkPayment').style.display='none';
+  document.getElementById('chkReview').style.display='none';
+  ['cs2','cs3','cs4'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.remove('done','active');
+    el.textContent=id.replace('cs','');
+  });
+  ['csl2','csl3','csl4'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('cs2').classList.add('active');
+  document.getElementById('csl2').classList.add('active');
+  showPage('home');
+  showToast('🎉','Order placed! Confirmation sent to your email.');
 }
 
-const searchInput = document.getElementById('searchInput');
-const suggestBox = document.getElementById('suggestBox');
-searchInput.addEventListener('focus', () => { if (!searchInput.value) suggestBox.style.display = 'block'; });
-searchInput.addEventListener('input', () => { suggestBox.style.display = searchInput.value.length > 0 ? 'block' : 'none'; });
-document.addEventListener('click', e => { if (!document.getElementById('searchWrap').contains(e.target)) suggestBox.style.display = 'none'; });
-suggestBox.querySelectorAll('.pn-suggest-item').forEach(item => {
-  item.addEventListener('click', () => { searchInput.value = item.textContent.trim(); suggestBox.style.display = 'none'; });
-});
-document.querySelectorAll('.pn-cat').forEach(c => {
-  c.addEventListener('click', () => { document.querySelectorAll('.pn-cat').forEach(x => x.classList.remove('on')); c.classList.add('on'); });
-});
+// ═══════════════════ SEARCH ═══════════════════
+function showSearch() {
+  document.getElementById('searchDropdown').classList.add('open');
+  renderSearchResults('');
+}
+function onSearch(q) {
+  renderSearchResults(q);
+  document.getElementById('searchDropdown').classList.add('open');
+}
+function renderSearchResults(q) {
+  const res = q ? products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.spec.toLowerCase().includes(q.toLowerCase())).slice(0,5) : products.slice(0,4);
+  document.getElementById('searchResults').innerHTML = res.map(p=>`
+    <div class="search-item" onclick="openModal(p);document.getElementById('searchDropdown').classList.remove('open');document.getElementById('searchInput').value='${p.name}';">
+      <div class="search-item-icon">${p.icon}</div>
+      <div>
+        <div class="search-item-name">${p.name}</div>
+        <div class="search-item-sub">${p.spec} · ${p.price}</div>
+      </div>
+    </div>`).join('') || `<div style="padding:12px 14px;font-size:13px;color:var(--ink3);">No results for "${q}"</div>`;
+}
+function doSearch(q) {
+  document.getElementById('searchInput').value = q;
+  onSearch(q);
+}
 
-renderGrid('productGrid', products);
-renderGrid('newGrid', newProducts);
-renderCart();
+// ═══════════════════ TOAST ═══════════════════
+function showToast(icon, msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="toast-icon">${icon}</span>${msg}`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>{
+    t.classList.add('removing');
+    setTimeout(()=>t.remove(), 300);
+  }, 2800);
+}
+
+// ═══════════════════ DEAL TIMER ═══════════════════
+function startTimer() {
+  let h=4,m=32,s=18;
+  setInterval(()=>{
+    s--; if(s<0){s=59;m--;} if(m<0){m=59;h--;} if(h<0){h=23;m=59;s=59;}
+    const pad=n=>String(n).padStart(2,'0');
+    document.getElementById('th').textContent=pad(h);
+    document.getElementById('tm').textContent=pad(m);
+    document.getElementById('ts').textContent=pad(s);
+  },1000);
+}
+
+// ═══════════════════ NEWSLETTER ═══════════════════
+function subscribeNL() {
+  const v = document.getElementById('nlEmail').value;
+  if (!v || !v.includes('@')) { showToast('⚠️','Please enter a valid email'); return; }
+  document.getElementById('nlEmail').value='';
+  showToast('✅',`Subscribed! Check your inbox for 15% off.`);
+}
+
+// ═══════════════════ RUN ═══════════════════
+init();
 </script>
+</body>
+</html>

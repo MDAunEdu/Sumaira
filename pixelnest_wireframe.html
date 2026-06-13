@@ -1,0 +1,577 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .pn-root { background: var(--color-background-tertiary); min-height: 100vh; padding: 0; }
+
+  /* NAV */
+  .pn-nav { background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; position: sticky; top: 0; z-index: 100; }
+  .pn-logo { font-size: 17px; font-weight: 500; color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; }
+  .pn-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: #534AB7; }
+  .pn-nav-links { display: flex; gap: 6px; }
+  .pn-nav-link { font-size: 13px; color: var(--color-text-secondary); padding: 5px 10px; border-radius: var(--border-radius-md); cursor: pointer; white-space: nowrap; border: none; background: none; }
+  .pn-nav-link:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .pn-nav-link.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; }
+  .pn-nav-actions { display: flex; align-items: center; gap: 8px; }
+  .pn-icon-btn { width: 34px; height: 34px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text-secondary); font-size: 16px; position: relative; }
+  .pn-icon-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .pn-cart-badge { position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; border-radius: 50%; background: #534AB7; color: #fff; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 500; border: 1.5px solid var(--color-background-primary); }
+
+  /* SEARCH BAR */
+  .pn-search-bar { background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 10px 24px; display: flex; gap: 8px; align-items: center; }
+  .pn-search-wrap { flex: 1; position: relative; }
+  .pn-search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-tertiary); font-size: 16px; }
+  .pn-search-input { width: 100%; height: 36px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); padding: 0 12px 0 34px; font-size: 13px; color: var(--color-text-primary); outline: none; }
+  .pn-search-input::placeholder { color: var(--color-text-tertiary); }
+  .pn-search-input:focus { border-color: #534AB7; box-shadow: 0 0 0 2px rgba(83,74,183,0.15); }
+  .pn-filter-btn { height: 36px; padding: 0 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); font-size: 13px; color: var(--color-text-secondary); cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .pn-filter-btn:hover { background: var(--color-background-secondary); }
+
+  /* PAGES */
+  .pn-page { display: none; animation: fadeIn 0.18s ease; }
+  .pn-page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* HERO */
+  .pn-hero { background: linear-gradient(135deg, #EEEDFE 0%, #E6F1FB 100%); border-radius: var(--border-radius-lg); margin: 20px 24px 0; padding: 40px 36px; display: flex; align-items: center; justify-content: space-between; overflow: hidden; position: relative; border: 0.5px solid #CECBF6; }
+  .pn-hero-text h1 { font-size: 26px; font-weight: 500; color: #26215C; line-height: 1.3; max-width: 280px; }
+  .pn-hero-text p { font-size: 14px; color: #534AB7; margin: 10px 0 20px; }
+  .pn-hero-cta { height: 38px; padding: 0 20px; background: #534AB7; color: #fff; border: none; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-sans); }
+  .pn-hero-cta:hover { background: #3C3489; }
+  .pn-hero-visual { display: flex; gap: 10px; }
+  .pn-hero-card { width: 80px; height: 96px; border-radius: var(--border-radius-md); background: rgba(255,255,255,0.7); border: 0.5px solid #AFA9EC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  .pn-hero-card i { font-size: 22px; color: #534AB7; }
+  .pn-hero-card span { font-size: 10px; color: #3C3489; font-weight: 500; text-align: center; }
+  .pn-hero-dots { display: flex; gap: 6px; margin-top: 16px; }
+  .pn-hero-dot { width: 6px; height: 6px; border-radius: 50%; background: #AFA9EC; }
+  .pn-hero-dot.on { background: #534AB7; width: 18px; border-radius: 3px; }
+
+  /* CATEGORY CHIPS */
+  .pn-cats { display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; scrollbar-width: none; }
+  .pn-cats::-webkit-scrollbar { display: none; }
+  .pn-cat { height: 32px; padding: 0 14px; border-radius: 99px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 12px; color: var(--color-text-secondary); cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .pn-cat:hover, .pn-cat.on { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; font-weight: 500; }
+
+  /* SECTION HEADER */
+  .pn-sec { padding: 20px 24px 0; }
+  .pn-sec-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .pn-sec-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .pn-sec-link { font-size: 12px; color: #534AB7; cursor: pointer; }
+  .pn-sec-link:hover { text-decoration: underline; }
+
+  /* PRODUCT GRID */
+  .pn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
+  .pn-product { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
+  .pn-product:hover { border-color: var(--color-border-secondary); }
+  .pn-product-img { height: 110px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--color-text-tertiary); position: relative; }
+  .pn-product-badge { position: absolute; top: 8px; left: 8px; background: #FAECE7; color: #993C1D; font-size: 10px; padding: 2px 7px; border-radius: 99px; font-weight: 500; }
+  .pn-product-info { padding: 10px 12px; }
+  .pn-product-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; margin-bottom: 4px; }
+  .pn-product-sub { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .pn-product-row { display: flex; align-items: center; justify-content: space-between; }
+  .pn-product-price { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .pn-add-btn { width: 26px; height: 26px; border-radius: 6px; background: #534AB7; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 14px; }
+  .pn-add-btn:hover { background: #3C3489; }
+  .pn-stars { display: flex; gap: 1px; margin-bottom: 4px; }
+  .pn-stars i { font-size: 10px; color: #BA7517; }
+
+  /* CART PAGE */
+  .pn-cart-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; padding: 20px 24px; }
+  .pn-cart-items { display: flex; flex-direction: column; gap: 10px; }
+  .pn-cart-item { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; display: flex; gap: 14px; align-items: flex-start; }
+  .pn-cart-thumb { width: 60px; height: 60px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+  .pn-cart-details { flex: 1; }
+  .pn-cart-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+  .pn-cart-variant { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 10px; }
+  .pn-qty { display: flex; align-items: center; gap: 8px; }
+  .pn-qty-btn { width: 26px; height: 26px; border-radius: 6px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: var(--color-text-secondary); }
+  .pn-qty-val { font-size: 13px; font-weight: 500; min-width: 18px; text-align: center; color: var(--color-text-primary); }
+  .pn-cart-price { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .pn-cart-remove { font-size: 12px; color: #993C1D; cursor: pointer; margin-top: 8px; background: none; border: none; font-family: var(--font-sans); }
+
+  /* ORDER SUMMARY */
+  .pn-summary { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 18px; height: fit-content; position: sticky; top: 64px; }
+  .pn-summary-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 14px; }
+  .pn-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .pn-summary-row.total { font-weight: 500; color: var(--color-text-primary); font-size: 15px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 10px; margin-top: 4px; }
+  .pn-coupon { display: flex; gap: 6px; margin: 14px 0; }
+  .pn-coupon input { flex: 1; height: 32px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 0 10px; font-size: 12px; background: var(--color-background-secondary); color: var(--color-text-primary); outline: none; }
+  .pn-coupon button { height: 32px; padding: 0 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); font-size: 12px; cursor: pointer; color: var(--color-text-secondary); }
+  .pn-checkout-btn { width: 100%; height: 40px; background: #534AB7; border: none; border-radius: var(--border-radius-md); color: #fff; font-size: 14px; cursor: pointer; font-family: var(--font-sans); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
+  .pn-checkout-btn:hover { background: #3C3489; }
+
+  /* CHECKOUT PAGE */
+  .pn-checkout-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; padding: 20px 24px; }
+  .pn-steps { display: flex; gap: 0; margin-bottom: 20px; }
+  .pn-step { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .pn-step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); flex-shrink: 0; }
+  .pn-step-num.done { background: #534AB7; color: #fff; border-color: #534AB7; }
+  .pn-step-num.cur { background: #EEEDFE; color: #534AB7; border-color: #AFA9EC; font-weight: 500; }
+  .pn-step-label { font-size: 12px; color: var(--color-text-secondary); }
+  .pn-step-label.cur { color: #534AB7; font-weight: 500; }
+  .pn-step-line { flex: 1; height: 0.5px; background: var(--color-border-tertiary); margin: 0 8px; }
+  .pn-form-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 20px; }
+  .pn-form-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 16px; }
+  .pn-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pn-form-full { grid-column: 1 / -1; }
+  .pn-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 5px; display: block; }
+  .pn-field { height: 36px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 0 12px; font-size: 13px; background: var(--color-background-secondary); color: var(--color-text-primary); width: 100%; outline: none; font-family: var(--font-sans); }
+  .pn-field:focus { border-color: #534AB7; box-shadow: 0 0 0 2px rgba(83,74,183,0.12); background: var(--color-background-primary); }
+  .pn-pay-opts { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .pn-pay-opt { display: flex; align-items: center; gap: 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; cursor: pointer; }
+  .pn-pay-opt.sel { border-color: #AFA9EC; background: #EEEDFE; }
+  .pn-pay-opt i { font-size: 20px; color: #534AB7; }
+  .pn-pay-opt span { font-size: 13px; color: var(--color-text-primary); flex: 1; }
+  .pn-pay-opt .pn-radio { width: 16px; height: 16px; border-radius: 50%; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); display: flex; align-items: center; justify-content: center; }
+  .pn-pay-opt.sel .pn-radio::after { content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; background: #534AB7; }
+  .pn-form-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+  .pn-back-btn { height: 36px; padding: 0 16px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: none; font-size: 13px; cursor: pointer; color: var(--color-text-secondary); font-family: var(--font-sans); }
+  .pn-next-btn { height: 36px; padding: 0 20px; background: #534AB7; border: none; border-radius: var(--border-radius-md); color: #fff; font-size: 13px; cursor: pointer; font-family: var(--font-sans); }
+  .pn-next-btn:hover { background: #3C3489; }
+
+  /* TOAST */
+  .pn-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: #26215C; color: #fff; padding: 10px 18px; border-radius: var(--border-radius-md); font-size: 13px; z-index: 999; transition: transform 0.25s ease; white-space: nowrap; display: flex; align-items: center; gap: 8px; pointer-events: none; }
+  .pn-toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* SEARCH SUGGESTIONS */
+  .pn-suggest { position: absolute; top: 40px; left: 0; right: 0; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); z-index: 200; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: none; }
+  .pn-suggest-item { padding: 8px 14px; font-size: 13px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .pn-suggest-item:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .pn-suggest-item i { font-size: 14px; color: var(--color-text-tertiary); }
+  .pn-empty { padding: 40px 24px; text-align: center; color: var(--color-text-tertiary); font-size: 14px; }
+</style>
+
+<h2 class="sr-only">PixelNest e-commerce wireframe — interactive prototype showing homepage, product grid, cart, and checkout flows</h2>
+
+<div class="pn-root" id="pnRoot">
+
+  <!-- NAV -->
+  <nav class="pn-nav">
+    <div class="pn-logo"><div class="pn-logo-dot"></div>PixelNest</div>
+    <div class="pn-nav-links">
+      <button class="pn-nav-link active" onclick="showPage('home',this)">Home</button>
+      <button class="pn-nav-link" onclick="showPage('home',this)">Cameras</button>
+      <button class="pn-nav-link" onclick="showPage('home',this)">Lenses</button>
+      <button class="pn-nav-link" onclick="showPage('home',this)">Accessories</button>
+      <button class="pn-nav-link" onclick="showPage('home',this)">Deals</button>
+      <button class="pn-nav-link" onclick="showPage('home',this)">Support</button>
+    </div>
+    <div class="pn-nav-actions">
+      <div class="pn-icon-btn" title="Account" onclick=""><i class="ti ti-user" aria-hidden="true"></i></div>
+      <div class="pn-icon-btn" title="Wishlist" onclick=""><i class="ti ti-heart" aria-hidden="true"></i></div>
+      <div class="pn-icon-btn" title="Cart" onclick="showPage('cart',null)" style="position:relative;">
+        <i class="ti ti-shopping-bag" aria-hidden="true"></i>
+        <div class="pn-cart-badge" id="cartBadge">3</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SEARCH BAR -->
+  <div class="pn-search-bar">
+    <div class="pn-search-wrap" id="searchWrap">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input class="pn-search-input" placeholder="Search cameras, lenses, accessories..." id="searchInput" autocomplete="off" />
+      <div class="pn-suggest" id="suggestBox">
+        <div class="pn-suggest-item"><i class="ti ti-trending-up" aria-hidden="true"></i>Sony Alpha mirrorless cameras</div>
+        <div class="pn-suggest-item"><i class="ti ti-trending-up" aria-hidden="true"></i>Canon EF 50mm prime lens</div>
+        <div class="pn-suggest-item"><i class="ti ti-trending-up" aria-hidden="true"></i>Neutral density filter kit</div>
+        <div class="pn-suggest-item"><i class="ti ti-clock" aria-hidden="true"></i>Tripods under ₹5000</div>
+      </div>
+    </div>
+    <button class="pn-filter-btn"><i class="ti ti-adjustments-horizontal" aria-hidden="true" style="font-size:14px;"></i>Filters</button>
+    <button class="pn-filter-btn"><i class="ti ti-arrows-sort" aria-hidden="true" style="font-size:14px;"></i>Sort</button>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div class="pn-page active" id="page-home">
+    <!-- Hero -->
+    <div class="pn-hero">
+      <div class="pn-hero-text">
+        <h1>Capture the world, one pixel at a time.</h1>
+        <p>New arrivals — up to 30% off this week</p>
+        <button class="pn-hero-cta" onclick="showPage('home',null)">Shop now <i class="ti ti-arrow-right" aria-hidden="true" style="font-size:14px;"></i></button>
+        <div class="pn-hero-dots" style="margin-top:16px;">
+          <div class="pn-hero-dot on"></div>
+          <div class="pn-hero-dot"></div>
+          <div class="pn-hero-dot"></div>
+        </div>
+      </div>
+      <div class="pn-hero-visual">
+        <div class="pn-hero-card"><i class="ti ti-camera" aria-hidden="true"></i><span>DSLRs</span></div>
+        <div class="pn-hero-card"><i class="ti ti-aperture" aria-hidden="true"></i><span>Lenses</span></div>
+        <div class="pn-hero-card"><i class="ti ti-battery-charging" aria-hidden="true"></i><span>Accessories</span></div>
+      </div>
+    </div>
+
+    <!-- Category chips -->
+    <div class="pn-cats">
+      <div class="pn-cat on"><i class="ti ti-layout-grid" aria-hidden="true" style="font-size:13px;"></i>All</div>
+      <div class="pn-cat"><i class="ti ti-camera" aria-hidden="true" style="font-size:13px;"></i>Mirrorless</div>
+      <div class="pn-cat"><i class="ti ti-camera" aria-hidden="true" style="font-size:13px;"></i>DSLR</div>
+      <div class="pn-cat"><i class="ti ti-aperture" aria-hidden="true" style="font-size:13px;"></i>Prime Lenses</div>
+      <div class="pn-cat"><i class="ti ti-aperture" aria-hidden="true" style="font-size:13px;"></i>Zoom Lenses</div>
+      <div class="pn-cat"><i class="ti ti-device-camera" aria-hidden="true" style="font-size:13px;"></i>Film</div>
+      <div class="pn-cat"><i class="ti ti-box" aria-hidden="true" style="font-size:13px;"></i>Bags & Cases</div>
+      <div class="pn-cat"><i class="ti ti-bulb" aria-hidden="true" style="font-size:13px;"></i>Lighting</div>
+    </div>
+
+    <!-- Best Sellers -->
+    <div class="pn-sec">
+      <div class="pn-sec-head">
+        <div class="pn-sec-title">Best sellers</div>
+        <div class="pn-sec-link">View all →</div>
+      </div>
+      <div class="pn-grid" id="productGrid"></div>
+    </div>
+
+    <!-- New Arrivals -->
+    <div class="pn-sec" style="margin-bottom:24px;">
+      <div class="pn-sec-head">
+        <div class="pn-sec-title">New arrivals</div>
+        <div class="pn-sec-link">View all →</div>
+      </div>
+      <div class="pn-grid" id="newGrid"></div>
+    </div>
+  </div>
+
+  <!-- CART PAGE -->
+  <div class="pn-page" id="page-cart">
+    <div class="pn-sec-head" style="padding: 20px 24px 0;">
+      <div class="pn-sec-title" style="font-size:17px;">Your cart <span style="color:var(--color-text-tertiary); font-weight:400; font-size:13px;" id="cartCount">(3 items)</span></div>
+      <div class="pn-sec-link" onclick="showPage('home',null)">← Continue shopping</div>
+    </div>
+    <div class="pn-cart-layout">
+      <div class="pn-cart-items" id="cartItems"></div>
+      <div class="pn-summary">
+        <div class="pn-summary-title">Order summary</div>
+        <div class="pn-summary-row"><span>Subtotal</span><span>₹1,04,497</span></div>
+        <div class="pn-summary-row"><span>Shipping</span><span style="color:#0F6E56;">Free</span></div>
+        <div class="pn-summary-row"><span>Tax (18% GST)</span><span>₹18,809</span></div>
+        <div class="pn-coupon">
+          <input placeholder="Promo code" />
+          <button>Apply</button>
+        </div>
+        <div class="pn-summary-row total"><span>Total</span><span>₹1,23,306</span></div>
+        <button class="pn-checkout-btn" onclick="showPage('checkout',null)">
+          <i class="ti ti-lock" aria-hidden="true" style="font-size:15px;"></i>Proceed to checkout
+        </button>
+        <p style="text-align:center; font-size:11px; color:var(--color-text-tertiary); margin-top:10px;">Secured by SSL · 256-bit encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT PAGE -->
+  <div class="pn-page" id="page-checkout">
+    <div class="pn-sec-head" style="padding: 20px 24px 0;">
+      <div class="pn-sec-title" style="font-size:17px;">Checkout</div>
+      <div class="pn-sec-link" onclick="showPage('cart',null)">← Back to cart</div>
+    </div>
+    <div class="pn-checkout-layout">
+      <div>
+        <!-- Steps -->
+        <div class="pn-steps" id="checkoutSteps">
+          <div class="pn-step">
+            <div class="pn-step-num done" id="s1"><i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i></div>
+            <div class="pn-step-label">Account</div>
+          </div>
+          <div class="pn-step-line"></div>
+          <div class="pn-step">
+            <div class="pn-step-num cur" id="s2">2</div>
+            <div class="pn-step-label cur" id="sl2">Shipping</div>
+          </div>
+          <div class="pn-step-line"></div>
+          <div class="pn-step">
+            <div class="pn-step-num" id="s3">3</div>
+            <div class="pn-step-label" id="sl3">Payment</div>
+          </div>
+          <div class="pn-step-line"></div>
+          <div class="pn-step">
+            <div class="pn-step-num" id="s4">4</div>
+            <div class="pn-step-label" id="sl4">Review</div>
+          </div>
+        </div>
+
+        <!-- Step 2: Shipping -->
+        <div id="stepShipping">
+          <div class="pn-form-card">
+            <div class="pn-form-title"><i class="ti ti-truck" aria-hidden="true" style="font-size:16px; vertical-align:-2px; margin-right:6px;"></i>Shipping information</div>
+            <div class="pn-form-grid">
+              <div>
+                <label class="pn-label">First name</label>
+                <input class="pn-field" placeholder="Arjun" />
+              </div>
+              <div>
+                <label class="pn-label">Last name</label>
+                <input class="pn-field" placeholder="Sharma" />
+              </div>
+              <div class="pn-form-full">
+                <label class="pn-label">Address line 1</label>
+                <input class="pn-field" placeholder="12, MG Road" />
+              </div>
+              <div class="pn-form-full">
+                <label class="pn-label">Address line 2 (optional)</label>
+                <input class="pn-field" placeholder="Apartment, suite, etc." />
+              </div>
+              <div>
+                <label class="pn-label">City</label>
+                <input class="pn-field" placeholder="Mumbai" />
+              </div>
+              <div>
+                <label class="pn-label">PIN code</label>
+                <input class="pn-field" placeholder="400001" />
+              </div>
+              <div class="pn-form-full">
+                <label class="pn-label">Phone number</label>
+                <input class="pn-field" placeholder="+91 98765 43210" />
+              </div>
+            </div>
+            <div style="margin-top:14px;">
+              <div class="pn-form-title" style="font-size:13px; margin-bottom:10px;">Delivery method</div>
+              <div style="display:flex; gap:8px;">
+                <div class="pn-pay-opt sel" style="flex:1;">
+                  <i class="ti ti-bolt" aria-hidden="true"></i><span><strong style="font-weight:500;">Express</strong><br><span style="font-size:11px; color:var(--color-text-secondary);">2–3 days · Free</span></span>
+                  <div class="pn-radio"></div>
+                </div>
+                <div class="pn-pay-opt" style="flex:1;">
+                  <i class="ti ti-truck" aria-hidden="true"></i><span><strong style="font-weight:500;">Standard</strong><br><span style="font-size:11px; color:var(--color-text-secondary);">5–7 days · Free</span></span>
+                  <div class="pn-radio"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pn-form-actions">
+              <button class="pn-back-btn" onclick="showPage('cart',null)">← Back</button>
+              <button class="pn-next-btn" onclick="goToPayment()">Continue to payment →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Payment -->
+        <div id="stepPayment" style="display:none;">
+          <div class="pn-form-card">
+            <div class="pn-form-title"><i class="ti ti-credit-card" aria-hidden="true" style="font-size:16px; vertical-align:-2px; margin-right:6px;"></i>Payment method</div>
+            <div class="pn-pay-opts">
+              <div class="pn-pay-opt sel"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Credit / Debit card</span><div class="pn-radio"></div></div>
+              <div class="pn-pay-opt"><i class="ti ti-brand-google-pay" aria-hidden="true"></i><span>UPI / Google Pay</span><div class="pn-radio"></div></div>
+              <div class="pn-pay-opt"><i class="ti ti-building-bank" aria-hidden="true"></i><span>Net banking</span><div class="pn-radio"></div></div>
+              <div class="pn-pay-opt"><i class="ti ti-wallet" aria-hidden="true"></i><span>PixelNest Wallet (₹2,400 available)</span><div class="pn-radio"></div></div>
+            </div>
+            <div class="pn-form-grid" style="margin-top:14px;">
+              <div class="pn-form-full">
+                <label class="pn-label">Card number</label>
+                <input class="pn-field" placeholder="4242 4242 4242 4242" />
+              </div>
+              <div>
+                <label class="pn-label">Expiry</label>
+                <input class="pn-field" placeholder="MM / YY" />
+              </div>
+              <div>
+                <label class="pn-label">CVV</label>
+                <input class="pn-field" placeholder="···" />
+              </div>
+              <div class="pn-form-full">
+                <label class="pn-label">Name on card</label>
+                <input class="pn-field" placeholder="Arjun Sharma" />
+              </div>
+            </div>
+            <div class="pn-form-actions">
+              <button class="pn-back-btn" onclick="goToShipping()">← Back</button>
+              <button class="pn-next-btn" onclick="goToReview()">Review order →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Review -->
+        <div id="stepReview" style="display:none;">
+          <div class="pn-form-card">
+            <div class="pn-form-title"><i class="ti ti-clipboard-check" aria-hidden="true" style="font-size:16px; vertical-align:-2px; margin-right:6px;"></i>Review your order</div>
+            <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding:12px 14px; margin-bottom:14px;">
+              <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px; font-weight:500;">Shipping to</div>
+              <div style="font-size:13px; color:var(--color-text-primary);">Arjun Sharma · 12, MG Road, Mumbai 400001</div>
+              <div style="font-size:12px; color:var(--color-text-secondary); margin-top:2px;">+91 98765 43210 · Express 2-3 days</div>
+            </div>
+            <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding:12px 14px; margin-bottom:14px;">
+              <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px; font-weight:500;">Payment</div>
+              <div style="font-size:13px; color:var(--color-text-primary); display:flex; align-items:center; gap:8px;"><i class="ti ti-credit-card" aria-hidden="true"></i>Visa ending in 4242</div>
+            </div>
+            <div id="reviewItems" style="margin-bottom:14px;"></div>
+            <div class="pn-form-actions" style="border-top: 0.5px solid var(--color-border-tertiary); padding-top:16px; margin-top:4px;">
+              <button class="pn-back-btn" onclick="goToPayment()">← Back</button>
+              <button class="pn-next-btn" style="background:#0F6E56; padding:0 24px; height:40px;" onclick="placeOrder()"><i class="ti ti-check" style="font-size:15px;" aria-hidden="true"></i> Place order · ₹1,23,306</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary sidebar -->
+      <div class="pn-summary" style="top:112px;">
+        <div class="pn-summary-title">Order summary</div>
+        <div id="checkoutSummaryItems"></div>
+        <div style="border-top:0.5px solid var(--color-border-tertiary); margin:10px 0 8px;"></div>
+        <div class="pn-summary-row"><span>Subtotal</span><span>₹1,04,497</span></div>
+        <div class="pn-summary-row"><span>Shipping</span><span style="color:#0F6E56;">Free</span></div>
+        <div class="pn-summary-row"><span>Tax (18% GST)</span><span>₹18,809</span></div>
+        <div class="pn-summary-row total"><span>Total</span><span>₹1,23,306</span></div>
+        <p style="text-align:center; font-size:11px; color:var(--color-text-tertiary); margin-top:12px; display:flex; align-items:center; justify-content:center; gap:4px;"><i class="ti ti-shield-check" aria-hidden="true" style="font-size:14px;"></i>Protected by PixelNest Guarantee</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="pn-toast" id="toast"></div>
+
+<script>
+const products = [
+  { name: "Sony Alpha 7 IV", sub: "Full-frame mirrorless", price: "₹2,42,990", icon: "ti-camera", badge: "Best seller" },
+  { name: "Canon EF 50mm f/1.4", sub: "Prime lens", price: "₹24,999", icon: "ti-aperture", badge: "Sale" },
+  { name: "Fujifilm X-T5", sub: "APS-C mirrorless", price: "₹1,54,999", icon: "ti-camera", badge: null },
+  { name: "Godox SL-60W LED", sub: "Studio light", price: "₹12,499", icon: "ti-bulb", badge: "New" },
+  { name: "Peak Design Everyday", sub: "Camera bag 20L", price: "₹17,990", icon: "ti-backpack", badge: null },
+  { name: "Manfrotto MT055", sub: "Carbon tripod", price: "₹32,500", icon: "ti-arrows-up-down", badge: null },
+];
+const newProducts = [
+  { name: "Nikon Z9 Body", sub: "Pro mirrorless", price: "₹5,04,995", icon: "ti-camera", badge: "New" },
+  { name: "Sony FE 85mm f/1.4", sub: "Portrait GM lens", price: "₹1,44,990", icon: "ti-aperture", badge: "New" },
+  { name: "DJI Osmo Pocket 3", sub: "Pocket gimbal cam", price: "₹42,999", icon: "ti-device-camera", badge: "New" },
+  { name: "Lowepro ProTrekker", sub: "Hiking camera pack", price: "₹21,990", icon: "ti-backpack", badge: "New" },
+];
+const cartData = [
+  { name: "Sony Alpha 7 IV Body", variant: "Black · 1x battery", price: "₹2,42,990", icon: "ti-camera", qty: 1 },
+  { name: "Canon EF 50mm f/1.4", variant: "Universal mount", price: "₹24,999", icon: "ti-aperture", qty: 2 },
+  { name: "Peak Design Bag 20L", variant: "Ash grey", price: "₹17,990", icon: "ti-backpack", qty: 1 },
+];
+
+function renderGrid(id, data) {
+  const g = document.getElementById(id);
+  g.innerHTML = data.map((p, i) => `
+    <div class="pn-product" onclick="addToCart('${p.name}')">
+      <div class="pn-product-img">
+        <i class="ti ${p.icon}" aria-hidden="true"></i>
+        ${p.badge ? `<div class="pn-product-badge">${p.badge}</div>` : ''}
+      </div>
+      <div class="pn-product-info">
+        <div class="pn-stars">${'<i class="ti ti-star-filled" aria-hidden="true"></i>'.repeat(4)}<i class="ti ti-star-half-filled" aria-hidden="true"></i></div>
+        <div class="pn-product-name">${p.name}</div>
+        <div class="pn-product-sub">${p.sub}</div>
+        <div class="pn-product-row">
+          <div class="pn-product-price">${p.price}</div>
+          <button class="pn-add-btn" aria-label="Add ${p.name} to cart"><i class="ti ti-plus" aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  el.innerHTML = cartData.map((c, i) => `
+    <div class="pn-cart-item">
+      <div class="pn-cart-thumb"><i class="ti ${c.icon}" aria-hidden="true"></i></div>
+      <div class="pn-cart-details">
+        <div class="pn-cart-name">${c.name}</div>
+        <div class="pn-cart-variant">${c.variant}</div>
+        <div class="pn-qty">
+          <div class="pn-qty-btn" onclick="changeQty(${i},-1)"><i class="ti ti-minus" style="font-size:12px;" aria-hidden="true"></i></div>
+          <div class="pn-qty-val" id="qty${i}">${c.qty}</div>
+          <div class="pn-qty-btn" onclick="changeQty(${i},1)"><i class="ti ti-plus" style="font-size:12px;" aria-hidden="true"></i></div>
+        </div>
+        <button class="pn-cart-remove" onclick="removeFromCart(${i})">Remove</button>
+      </div>
+      <div class="pn-cart-price">${c.price}</div>
+    </div>`).join('');
+  document.getElementById('cartCount').textContent = `(${cartData.length} items)`;
+}
+
+function renderCheckoutSummary() {
+  const el = document.getElementById('checkoutSummaryItems');
+  const ri = document.getElementById('reviewItems');
+  const html = cartData.map(c => `
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+      <div style="width:32px;height:32px;border-radius:6px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--color-text-secondary);flex-shrink:0;"><i class="ti ${c.icon}" aria-hidden="true"></i></div>
+      <div style="flex:1;"><div style="font-size:12px;color:var(--color-text-primary);font-weight:500;">${c.name}</div><div style="font-size:11px;color:var(--color-text-secondary);">${c.variant}</div></div>
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">${c.price}</div>
+    </div>`).join('');
+  if (el) el.innerHTML = html;
+  if (ri) ri.innerHTML = html;
+}
+
+function changeQty(i, d) {
+  cartData[i].qty = Math.max(1, cartData[i].qty + d);
+  document.getElementById('qty' + i).textContent = cartData[i].qty;
+}
+
+function removeFromCart(i) {
+  cartData.splice(i, 1);
+  renderCart();
+  showToast('Item removed');
+  document.getElementById('cartBadge').textContent = cartData.length;
+}
+
+function addToCart(name) {
+  document.getElementById('cartBadge').textContent = parseInt(document.getElementById('cartBadge').textContent) + 1;
+  showToast('Added to cart: ' + name);
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = '<i class="ti ti-check" aria-hidden="true" style="font-size:15px;"></i>' + msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function showPage(id, btn) {
+  document.querySelectorAll('.pn-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.pn-nav-link').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (id === 'cart') renderCart();
+  if (id === 'checkout') renderCheckoutSummary();
+}
+
+function goToPayment() {
+  document.getElementById('stepShipping').style.display = 'none';
+  document.getElementById('stepPayment').style.display = 'block';
+  document.getElementById('s2').className = 'pn-step-num done';
+  document.getElementById('s2').innerHTML = '<i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i>';
+  document.getElementById('s3').className = 'pn-step-num cur';
+  document.getElementById('sl3').className = 'pn-step-label cur';
+}
+function goToShipping() {
+  document.getElementById('stepPayment').style.display = 'none';
+  document.getElementById('stepShipping').style.display = 'block';
+  document.getElementById('s2').className = 'pn-step-num cur';
+  document.getElementById('s2').textContent = '2';
+  document.getElementById('s3').className = 'pn-step-num';
+  document.getElementById('sl3').className = 'pn-step-label';
+}
+function goToReview() {
+  document.getElementById('stepPayment').style.display = 'none';
+  document.getElementById('stepReview').style.display = 'block';
+  document.getElementById('s3').className = 'pn-step-num done';
+  document.getElementById('s3').innerHTML = '<i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i>';
+  document.getElementById('s4').className = 'pn-step-num cur';
+  document.getElementById('sl4').className = 'pn-step-label cur';
+  renderCheckoutSummary();
+}
+function placeOrder() {
+  showPage('home', null);
+  showToast('🎉 Order placed! You\'ll receive a confirmation shortly.');
+}
+
+const searchInput = document.getElementById('searchInput');
+const suggestBox = document.getElementById('suggestBox');
+searchInput.addEventListener('focus', () => { if (!searchInput.value) suggestBox.style.display = 'block'; });
+searchInput.addEventListener('input', () => { suggestBox.style.display = searchInput.value.length > 0 ? 'block' : 'none'; });
+document.addEventListener('click', e => { if (!document.getElementById('searchWrap').contains(e.target)) suggestBox.style.display = 'none'; });
+suggestBox.querySelectorAll('.pn-suggest-item').forEach(item => {
+  item.addEventListener('click', () => { searchInput.value = item.textContent.trim(); suggestBox.style.display = 'none'; });
+});
+document.querySelectorAll('.pn-cat').forEach(c => {
+  c.addEventListener('click', () => { document.querySelectorAll('.pn-cat').forEach(x => x.classList.remove('on')); c.classList.add('on'); });
+});
+
+renderGrid('productGrid', products);
+renderGrid('newGrid', newProducts);
+renderCart();
+</script>
